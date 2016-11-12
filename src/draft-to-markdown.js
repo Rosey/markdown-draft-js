@@ -1,3 +1,5 @@
+const SINGLE_SPACE_CHARACTER = /\u0020*$/;
+
 // A map of draftjs block types -> markdown open and close characters
 // Both the open and close methods must exist, even if they simply return an empty string.
 // They should always return a string.
@@ -204,6 +206,10 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   // Render text within content, along with any inline styles/entities
   Array.prototype.slice.apply(block.text).some(function (character, characterIndex) {
+    var initialMarkdownStringLength = markdownString.length;
+    markdownString = markdownString.replace(SINGLE_SPACE_CHARACTER, '');
+    var newMarkdownStringLength = markdownString.length;
+    var totalSpacesToReadd = initialMarkdownStringLength - newMarkdownStringLength;
     // Close any inline tags that need closing
     block.inlineStyleRanges.slice(styleCloseStartingPoint).forEach(function (style, styleIndex) {
       if (style.offset + style.length === characterIndex) {
@@ -248,6 +254,11 @@ function renderBlock(block, index, rawDraftObject, options) {
         return true;
       }
     });
+
+    // We removed trailing whitespace before closing markdown tags because
+    // markdown doesn't play nice with trailing whitespace.
+    // But we want to preserve it, so we re-add it after closing all tags.
+    markdownString += ' '.repeat(totalSpacesToReadd);
 
     // Open any inline tags that need opening
     block.inlineStyleRanges.slice(styleSearchStartingPoint).some(function (style, styleIndex) {
