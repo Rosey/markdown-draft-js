@@ -209,8 +209,9 @@ function renderBlock(block, index, rawDraftObject, options) {
         if ((customStyleItems[style.style] || StyleItems[style.style])) {
           markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
         }
+        styleCloseStartingPoint++;
       } else if (style.offset + style.length < characterIndex) {
-        styleCloseStartingPoint = styleIndex;
+        styleCloseStartingPoint++;
         return true;
       }
     });
@@ -222,8 +223,9 @@ function renderBlock(block, index, rawDraftObject, options) {
         if (customEntityItems[entity.type] || EntityItems[entity.type]) {
           markdownString += (customEntityItems[entity.type] || EntityItems[entity.type]).close(entity);
         }
+        entityCloseStartingPoint++;
       } else if (range.offset + range.length < characterIndex) {
-        entityCloseStartingPoint = rangeIndex;
+        entityCloseStartingPoint++;
         return true;
       }
     });
