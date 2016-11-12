@@ -18,6 +18,14 @@ describe('draftToMarkdown', function () {
     expect(markdown).toEqual('# Hello!\n\nMy name is **Rose** :) \nToday, I\'m here to talk to you about how great markdown is!\n\n\n## First, here\'s a few bullet points:\n\n- One\n- Two\n- Three\n\n```\nA codeblock\n```\n\nAnd then... `some monospace text`?\nOr... _italics?_');
   });
 
+  it('renders complex nested items correctly', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"2unrq","text":"asdasdasd","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":9,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"62od7","text":"asdasd","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":6,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"c5obb","text":"asdasdasdmmmasdads","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":9,"style":"BOLD"},{"offset":0,"length":12,"style":"ITALIC"}],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('**asdasdasd**\n\n**asdasd**\n\n**_asdasdasd_**_mmm_asdads');
+  });
+
   it('renders custom items correctly', function () {
     /* eslint-disable */
     var rawObject = {"entityMap":{},"blocks":[{"key":"f2bpj","text":"OneTwoThree","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":3,"style":"red"},{"offset":3,"length":3,"style":"orange"},{"offset":6,"length":5,"style":"yellow"}],"entityRanges":[],"data":{}}]};

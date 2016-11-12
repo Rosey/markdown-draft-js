@@ -183,6 +183,7 @@ const SingleNewlineAfterBlock = [
  * @return {String} markdown string
 **/
 function renderBlock(block, index, rawDraftObject, options) {
+  var openInlineStyles = [];
   var markdownString = '',
       // We keep track of where in the array of inlineStyleRanges and entityRanges we are
       // so that we don't keep re-searching the entire array when we check to see if we should open/close
@@ -207,7 +208,25 @@ function renderBlock(block, index, rawDraftObject, options) {
     block.inlineStyleRanges.slice(styleCloseStartingPoint).forEach(function (style, styleIndex) {
       if (style.offset + style.length === characterIndex) {
         if ((customStyleItems[style.style] || StyleItems[style.style])) {
+          var styleIndex = openInlineStyles.indexOf(style);
+
+          // Handle nested case - close any open inline styles before closing the parent
+          if (styleIndex !== openInlineStyles.length - 1) {
+            for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
+              markdownString += (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]).close();
+            }
+          }
+
           markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
+
+          // Handle nested case - reopen any inline styles after closing the parent
+          if (styleIndex !== openInlineStyles.length - 1) {
+            for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
+              markdownString += (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]).open();
+            }
+          }
+
+          openInlineStyles.splice(styleIndex, 1);
         }
         styleCloseStartingPoint++;
       } else if (style.offset + style.length < characterIndex) {
@@ -235,6 +254,7 @@ function renderBlock(block, index, rawDraftObject, options) {
       if (style.offset === characterIndex) {
         if ((customStyleItems[style.style] || StyleItems[style.style])) {
           markdownString += (customStyleItems[style.style] || StyleItems[style.style]).open();
+          openInlineStyles.push(style);
         }
       } else if (style.offset > characterIndex) {
         styleSearchStartingPoint = styleIndex;
