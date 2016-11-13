@@ -205,7 +205,7 @@ function renderBlock(block, index, rawDraftObject, options) {
   }
 
   // Render text within content, along with any inline styles/entities
-  Array.prototype.slice.apply(block.text).some(function (character, characterIndex) {
+  Array.from(block.text).some(function (character, characterIndex) {
     var initialMarkdownStringLength = markdownString.length;
     markdownString = markdownString.replace(SINGLE_SPACE_CHARACTER, '');
     var newMarkdownStringLength = markdownString.length;
