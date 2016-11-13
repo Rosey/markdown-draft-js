@@ -210,36 +210,6 @@ function renderBlock(block, index, rawDraftObject, options) {
     markdownString = markdownString.replace(SINGLE_SPACE_CHARACTER, '');
     var newMarkdownStringLength = markdownString.length;
     var totalSpacesToReadd = initialMarkdownStringLength - newMarkdownStringLength;
-    // Close any inline tags that need closing
-    block.inlineStyleRanges.slice(styleCloseStartingPoint).forEach(function (style, styleIndex) {
-      if (style.offset + style.length === characterIndex) {
-        if ((customStyleItems[style.style] || StyleItems[style.style])) {
-          var styleIndex = openInlineStyles.indexOf(style);
-
-          // Handle nested case - close any open inline styles before closing the parent
-          if (styleIndex !== openInlineStyles.length - 1) {
-            for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
-              markdownString += (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]).close();
-            }
-          }
-
-          markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
-
-          // Handle nested case - reopen any inline styles after closing the parent
-          if (styleIndex !== openInlineStyles.length - 1) {
-            for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
-              markdownString += (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]).open();
-            }
-          }
-
-          openInlineStyles.splice(styleIndex, 1);
-        }
-        styleCloseStartingPoint++;
-      } else if (style.offset + style.length < characterIndex) {
-        styleCloseStartingPoint++;
-        return true;
-      }
-    });
 
     // Close any entity tags that need closing
     block.entityRanges.slice(entityCloseStartingPoint).some(function (range, rangeIndex) {
@@ -251,6 +221,45 @@ function renderBlock(block, index, rawDraftObject, options) {
         entityCloseStartingPoint++;
       } else if (range.offset + range.length < characterIndex) {
         entityCloseStartingPoint++;
+        return true;
+      }
+    });
+
+    // Close any inline tags that need closing
+    block.inlineStyleRanges.slice(styleCloseStartingPoint).some(function (style, styleIndex) {
+      if (style.offset + style.length === characterIndex) {
+        if ((customStyleItems[style.style] || StyleItems[style.style])) {
+          var styleIndex = openInlineStyles.indexOf(style);
+
+          // Handle nested case - close any open inline styles before closing the parent
+          if (styleIndex !== openInlineStyles.length - 1) {
+            for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
+              var styleItem = (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]);
+              if (styleItem) {
+                markdownString += styleItem.close();
+              }
+            }
+          }
+
+          // Close the actual inline style being closed
+          markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
+
+          // Handle nested case - reopen any inline styles after closing the parent
+          if (styleIndex !== openInlineStyles.length - 1) {
+            for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
+              var styleItem = (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]);
+              if (styleItem) {
+                markdownString += styleItem.open();
+              }
+            }
+          }
+
+          openInlineStyles.splice(styleIndex, 1);
+        }
+
+        styleCloseStartingPoint++;
+      } else if (style.offset + style.length < characterIndex) {
+        styleCloseStartingPoint++;
         return true;
       }
     });
@@ -289,15 +298,6 @@ function renderBlock(block, index, rawDraftObject, options) {
     markdownString += character;
   });
 
-  // Close any remaining inline tags (if an inline tag ends at the very last char, we won't catch it inside the loop)
-  block.inlineStyleRanges.slice(styleCloseStartingPoint).forEach(function (style, styleIndex) {
-    if (style.offset + style.length >= block.text.length) {
-      if (customStyleItems[style.style] || StyleItems[style.style]) {
-        markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
-      }
-    }
-  });
-
   // Close any remaining entity tags
   block.entityRanges.slice(entityCloseStartingPoint).forEach(function (range, rangeIndex) {
     if (range.offset + range.length === block.text.length) {
@@ -306,6 +306,11 @@ function renderBlock(block, index, rawDraftObject, options) {
         markdownString += (customEntityItems[entity.type] || EntityItems[entity.type]).close(entity);
       }
     }
+  });
+
+  // Close any remaining inline tags (if an inline tag ends at the very last char, we won't catch it inside the loop)
+  openInlineStyles.reverse().forEach(function (style) {
+    markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
   });
 
   // Close block level item
