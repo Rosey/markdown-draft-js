@@ -10,7 +10,7 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "build": "browserify src -o lib/index.js",
     "prepublish": "npm run build",
     "test": "karma start --single-run",
     "lint": "eslint ./src",
@@ -22,18 +22,20 @@
         "babelify",
         {
           "presets": [
-            "es2015"
+            "es2015",
+            "react"
           ]
         }
       ]
     ]
   },
   "devDependencies": {
-    "babel-cli": "6.16.0",
+    "babel-cli": "^6.16.0",
     "babel-core": "6.17.0",
     "babel-eslint": "7.0.0",
     "babel-polyfill": "6.16.0",
     "babel-preset-es2015": "6.16.0",
+    "babel-preset-react": "^6.16.0",
     "babelify": "7.3.0",
     "browserify": "13.1.0",
     "eslint": "3.8.0",
