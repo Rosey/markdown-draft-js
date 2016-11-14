@@ -43,7 +43,7 @@ describe('draftToMarkdown', function () {
       }
     });
 
-    expect(markdown).toEqual('asdadd **adasdasd** [Bran Stark](@168181) **sadadsadasd_dasdasd_asdsadsadasdsadasd_asdasdsa_**');
+    expect(markdown).toEqual('asdadd **adasdasd** [Bran Stark](@168181) **sadadsadasd_dasdasd_asdsadsad**asdsadasd_asdasdsa_');
 
     /* eslint-disable */
     rawObject = {"entityMap":{"0":{"type":"mention","mutability":"SEGMENTED","data":{"mention":{"name":"Bran Stark","avatar":"https://d1ojh8nvjh9gcx.cloudfront.net/accounts/168181/2e4bff18a328c50404c411c04e608a32a967b1a2/large_2x.png","link":null,"id":168181}}}},"blocks":[{"key":"42pht","text":"jkhkhj Bran Stark  khkjj","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":17,"style":"BOLD"}],"entityRanges":[{"offset":7,"length":10,"key":0}],"data":{}}]};
