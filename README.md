@@ -2,6 +2,7 @@
 
 A tool for converting [Draft.js](https://facebook.github.io/draft-js/) [raw object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) to [markdown](https://daringfireball.net/projects/markdown/), and eventually vice-versa.
 
+**Looking for an example?** [There is a running example here](https://rosey.github.io/markdown-draft-js/)
 
 ## Basic Usage
 
