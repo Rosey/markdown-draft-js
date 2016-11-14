@@ -187,13 +187,6 @@ const SingleNewlineAfterBlock = [
 function renderBlock(block, index, rawDraftObject, options) {
   var openInlineStyles = [];
   var markdownString = '',
-      // We keep track of where in the array of inlineStyleRanges and entityRanges we are
-      // so that we don't keep re-searching the entire array when we check to see if we should open/close
-      // any markdown syntax.
-      styleSearchStartingPoint = 0,
-      styleCloseStartingPoint = 0,
-      entitySearchStartingPoint = 0,
-      entityCloseStartingPoint = 0,
       customStyleItems = options.styleItems || {},
       customEntityItems = options.entityItems || {};
 
@@ -212,27 +205,22 @@ function renderBlock(block, index, rawDraftObject, options) {
     var totalSpacesToReadd = initialMarkdownStringLength - newMarkdownStringLength;
 
     // Close any entity tags that need closing
-    block.entityRanges.slice(entityCloseStartingPoint).some(function (range, rangeIndex) {
+    block.entityRanges.forEach(function (range, rangeIndex) {
       if (range.offset + range.length === characterIndex) {
         var entity = rawDraftObject.entityMap[range.key];
         if (customEntityItems[entity.type] || EntityItems[entity.type]) {
           markdownString += (customEntityItems[entity.type] || EntityItems[entity.type]).close(entity);
         }
-        entityCloseStartingPoint++;
-      } else if (range.offset + range.length < characterIndex) {
-        entityCloseStartingPoint++;
-        return true;
       }
     });
 
     // Close any inline tags that need closing
-    block.inlineStyleRanges.slice(styleCloseStartingPoint).some(function (style, styleIndex) {
+    block.inlineStyleRanges.forEach(function (style, styleIndex) {
       if (style.offset + style.length === characterIndex) {
         if ((customStyleItems[style.style] || StyleItems[style.style])) {
           var styleIndex = openInlineStyles.indexOf(style);
-
           // Handle nested case - close any open inline styles before closing the parent
-          if (styleIndex !== openInlineStyles.length - 1) {
+          if (styleIndex > -1 && styleIndex !== openInlineStyles.length - 1) {
             for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
               var styleItem = (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]);
               if (styleItem) {
@@ -245,7 +233,7 @@ function renderBlock(block, index, rawDraftObject, options) {
           markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
 
           // Handle nested case - reopen any inline styles after closing the parent
-          if (styleIndex !== openInlineStyles.length - 1) {
+          if (styleIndex > -1 && styleIndex !== openInlineStyles.length - 1) {
             for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
               var styleItem = (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]);
               if (styleItem) {
@@ -256,11 +244,6 @@ function renderBlock(block, index, rawDraftObject, options) {
 
           openInlineStyles.splice(styleIndex, 1);
         }
-
-        styleCloseStartingPoint++;
-      } else if (style.offset + style.length < characterIndex) {
-        styleCloseStartingPoint++;
-        return true;
       }
     });
 
@@ -270,28 +253,22 @@ function renderBlock(block, index, rawDraftObject, options) {
     markdownString += ' '.repeat(totalSpacesToReadd);
 
     // Open any inline tags that need opening
-    block.inlineStyleRanges.slice(styleSearchStartingPoint).some(function (style, styleIndex) {
+    block.inlineStyleRanges.forEach(function (style, styleIndex) {
       if (style.offset === characterIndex) {
         if ((customStyleItems[style.style] || StyleItems[style.style])) {
           markdownString += (customStyleItems[style.style] || StyleItems[style.style]).open();
           openInlineStyles.push(style);
         }
-      } else if (style.offset > characterIndex) {
-        styleSearchStartingPoint = styleIndex;
-        return true;
       }
     });
 
     // Open any entity tags that need opening
-    block.entityRanges.slice(entitySearchStartingPoint).some(function (range, rangeIndex) {
+    block.entityRanges.forEach(function (range, rangeIndex) {
       if (range.offset === characterIndex) {
         var entity = rawDraftObject.entityMap[range.key];
         if (customEntityItems[entity.type] || EntityItems[entity.type]) {
           markdownString += (customEntityItems[entity.type] || EntityItems[entity.type]).open(entity);
         }
-      } else if (range.offset > characterIndex) {
-        entitySearchStartingPoint = rangeIndex;
-        return true;
       }
     });
 
@@ -299,7 +276,7 @@ function renderBlock(block, index, rawDraftObject, options) {
   });
 
   // Close any remaining entity tags
-  block.entityRanges.slice(entityCloseStartingPoint).forEach(function (range, rangeIndex) {
+  block.entityRanges.forEach(function (range, rangeIndex) {
     if (range.offset + range.length === block.text.length) {
       var entity = rawDraftObject.entityMap[range.key];
       if (customEntityItems[entity.type] || EntityItems[entity.type]) {
