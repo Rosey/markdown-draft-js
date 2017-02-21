@@ -37,12 +37,13 @@
     "karma-browserify": "5.1.0",
     "karma-chrome-launcher": "2.0.0",
     "karma-jasmine": "1.0.2",
-    "watchify": "^3.7.0"
+    "watchify": "3.7.0"
   },
   "dependencies": {
     "draft-js": "0.9.1",
     "markdown": "0.5.0",
     "react": "15.3.2",
-    "react-dom": "15.3.2"
+    "react-dom": "15.3.2",
+    "remarkable": "1.7.1"
   }
 }
