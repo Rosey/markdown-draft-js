@@ -1,4 +1,5 @@
 require('babel-polyfill');
 const draftToMarkdown = require('./draft-to-markdown');
+const markdownToDraft = require('./markdown-to-draft');
 
-module.exports = { draftToMarkdown };
+module.exports = { draftToMarkdown, markdownToDraft };
