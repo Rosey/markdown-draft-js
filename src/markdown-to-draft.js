@@ -61,9 +61,18 @@ const DefaultBlockTypes = {
 
 // Entity types. These are things like links or images that require
 // additional data and will be added to the `entityMap`
-// again, key is remarkable key, value is draftjs raw key
+// again. In this case, key is remarkable key, value is
+// meethod that returns the draftjs key + any data needed.
 const DefaultBlockEntities = {
-  link_open: 'LINK'
+  link_open: function (item) {
+    return {
+      type: 'LINK',
+      mutability: 'MUTABLE',
+      data: {
+        url: item.href
+      }
+    };
+  }
 };
 
 // Entity styles. Simple Inline styles that aren't added to entityMap
@@ -120,13 +129,8 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
       blockInlineStyleRanges.push(styleBlock);
     } else if (BlockEntities[child.type]) {
       var key = generateUniqueKey();
-      // TODO - this only handles links, we need this to be much more customizable.
-      blockEntities[key] = {
-        type: BlockEntities[child.type],
-        data: {
-          url: child.href
-        }
-      };
+
+      blockEntities[key] = BlockEntities[child.type](child);
 
       blockEntityRanges.push({
         offset: content.length || 0,
