@@ -1,6 +1,4 @@
 const Remarkable = require('remarkable');
-const md = new Remarkable();
-
 // Block level items, key is Remarkable's key for them, value returned is
 // A function that generates the raw draftjs key.
 //
@@ -147,7 +145,24 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
   return {content, blockEntities, blockEntityRanges, blockInlineStyleRanges};
 }
 
+/**
+ * Convert markdown into raw draftjs object
+ *
+ * @param {String} markdown - markdown to convert into raw draftjs object
+ * @param {Object} options - optional additional data, see readme for what options can be passed in.
+ *
+ * @return {Object} rawDraftObject
+**/
 function markdownToDraft(string, options = {}) {
+  const md = new Remarkable();
+
+  // If users want to define custom remarkable plugins for custom markdown, they can be added here
+  if (options.use) {
+    options.use.forEach(function (use) {
+      md.use(use, {});
+    });
+  }
+
   var blocks = []; // blocks will be returned as part of the final draftjs raw object
   var entityMap = {}; // entitymap will be returned as part of the final draftjs raw object
   var parsedData = md.parse(string, {}); // remarkable js takes markdown and makes it an array of style objects for us to easily parse
