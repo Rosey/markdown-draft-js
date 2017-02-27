@@ -57,6 +57,10 @@ const DefaultBlockTypes = {
   }
 };
 
+// Block level items, key is Remarkable's key for them, value returned is
+// A function that generates the raw block data.
+const DefaultBlockData = {}
+
 // Entity types. These are things like links or images that require
 // additional data and will be added to the `entityMap`
 // again. In this case, key is remarkable key, value is
@@ -170,6 +174,7 @@ function markdownToDraft(string, options = {}) {
 
   // Allow user to define custom BlockTypes and Entities if they so wish
   const BlockTypes = Object.assign({}, DefaultBlockTypes, options.blockTypes || {});
+  const BlockData = Object.assign({}, DefaultBlockData, options.blockData || {});
   const BlockEntities = Object.assign({}, DefaultBlockEntities, options.blockEntities || {});
   const BlockStyles = Object.assign({}, DefaultBlockStyles, options.blockStyles || {});
 
@@ -208,6 +213,10 @@ function markdownToDraft(string, options = {}) {
           type: BlockTypes[itemType](item),
           depth: 0
         };
+
+        if (BlockData[itemType]) {
+          block.data = BlockData[itemType](item)
+        }
 
         // Sigh edgecases.
         // Fence block doesn't have any inline children so we have to apply the content directly,
