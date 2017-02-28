@@ -151,10 +151,13 @@ describe('markdownToDraft', function () {
   it('can handle block data', function () {
     var markdown = '```js\ntest()\n```';
     var conversionResult = markdownToDraft(markdown, {
-      blockData: {
+      blockTypes: {
         fence: function (item) {
           return {
-            lang: item.params
+            type: 'code-block',
+            data: {
+              lang: item.params
+            }
           }
         }
       }
