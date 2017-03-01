@@ -122,7 +122,7 @@ describe('markdownToDraft', function () {
 
     var markdown = 'Test @[Rose](1)';
     var conversionResult = markdownToDraft(markdown, {
-      use: [mentionWrapper],
+      remarkablePlugins: [mentionWrapper],
       blockEntities: {
         mention_open: function (item) {
           return {

@@ -29,9 +29,12 @@ const DefaultBlockTypes = {
     };
   },
 
-  fence: function () {
+  fence: function (item) {
     return {
-      type: 'code-block'
+      type: 'code-block',
+      text: item.content,
+      entityRanges: [],
+      inlineStyleRanges: []
     };
   },
 
@@ -151,9 +154,9 @@ function markdownToDraft(string, options = {}) {
   const md = new Remarkable();
 
   // If users want to define custom remarkable plugins for custom markdown, they can be added here
-  if (options.use) {
-    options.use.forEach(function (use) {
-      md.use(use, {});
+  if (options.remarkablePlugins) {
+    options.remarkablePlugins.forEach(function (plugin) {
+      md.use(plugin, {});
     });
   }
 
@@ -201,15 +204,6 @@ function markdownToDraft(string, options = {}) {
         var block = Object.assign({
           depth: 0
         }, BlockTypes[itemType](item))
-
-        // Sigh edgecases.
-        // Fence block doesn't have any inline children so we have to apply the content directly,
-        // which is different from how all other blocks behave
-        if (itemType === 'fence') {
-          block.text = item.content;
-          block.inlineStyleRanges = [];
-          block.entityRanges = [];
-        }
 
         blocks.push(block);
       }
