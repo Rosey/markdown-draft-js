@@ -1,59 +1,53 @@
 const Remarkable = require('remarkable');
 // Block level items, key is Remarkable's key for them, value returned is
-// A function that generates the raw draftjs key.
+// A function that generates the raw draftjs key and block data.
 //
 // Why a function? Because in some cases (headers) we need additional information
-// before we can determine the exact key to return.
+// before we can determine the exact key to return. And blocks may also return data
 const DefaultBlockTypes = {
   paragraph_open: function (item) {
-    return 'unstyled';
+    return {
+      type: 'unstyled'
+    };
   },
 
   blockquote_open: function (item) {
-    return 'blockquote';
+    return {
+      type: 'blockquote'
+    };
   },
 
   ordered_list_item_open: function () {
-    return 'ordered-list-item';
+    return {
+      type: 'ordered-list-item'
+    };
   },
 
   unordered_list_item_open: function () {
-    return 'unordered-list-item';
+    return {
+      type: 'unordered-list-item'
+    };
   },
 
   fence: function () {
-    return 'code-block';
+    return {
+      type: 'code-block'
+    };
   },
 
   heading_open: function (item) {
-    var string = 'header-';
-    switch (item.hLevel) {
-      case 1:
-        string += 'one';
-        break;
+    var type = 'header-' + ({
+      1: 'one',
+      2: 'two',
+      3: 'three',
+      4: 'four',
+      5: 'five',
+      6: 'six'
+    })[item.hLevel];
 
-      case 2:
-        string += 'two';
-        break;
-
-      case 3:
-        string += 'three';
-        break;
-
-      case 4:
-        string += 'four';
-        break;
-
-      case 5:
-        string += 'five';
-        break;
-
-      case 6:
-        string += 'six';
-        break;
-    }
-
-    return string;
+    return {
+      type: type
+    };
   }
 };
 
@@ -204,10 +198,9 @@ function markdownToDraft(string, options = {}) {
       // TODO: Draft does allow lists to be nested within lists, it's the one exception to its rule,
       // but right now this code doesn't support that.
       if (item.level === 0 || item.type === 'list_item_open') {
-        var block = {
-          type: BlockTypes[itemType](item),
+        var block = Object.assign({
           depth: 0
-        };
+        }, BlockTypes[itemType](item))
 
         // Sigh edgecases.
         // Fence block doesn't have any inline children so we have to apply the content directly,

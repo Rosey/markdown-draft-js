@@ -74,7 +74,7 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[7].entityRanges).toEqual([]);
   });
 
-  it('can handle custom data', function () {
+  it('can handle block entity data', function () {
     const MentionRegexp = /^@\[([^\]]*)\]\s*\(([^)]+)\)/;
     function mentionWrapper(remarkable) {
       remarkable.inline.ruler.push('mention', function mention(state, silent) {
@@ -147,4 +147,23 @@ describe('markdownToDraft', function () {
     expect(conversionResult.entityMap[blockOneKey].data.id).toEqual('1');
     expect(conversionResult.entityMap[blockOneKey].data.name).toEqual('Rose');
   });
+
+  it('can handle block data', function () {
+    var markdown = '```js\ntest()\n```';
+    var conversionResult = markdownToDraft(markdown, {
+      blockTypes: {
+        fence: function (item) {
+          return {
+            type: 'code-block',
+            data: {
+              lang: item.params
+            }
+          }
+        }
+      }
+    });
+
+    expect(conversionResult.blocks[0].type).toEqual('code-block');
+    expect(conversionResult.blocks[0].data.lang).toEqual('js');
+  })
 });
