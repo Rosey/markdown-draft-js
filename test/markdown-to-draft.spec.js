@@ -73,4 +73,97 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[7].inlineStyleRanges[1].style).toEqual('ITALIC');
     expect(conversionResult.blocks[7].entityRanges).toEqual([]);
   });
+
+  it('can handle block entity data', function () {
+    const MentionRegexp = /^@\[([^\]]*)\]\s*\(([^)]+)\)/;
+    function mentionWrapper(remarkable) {
+      remarkable.inline.ruler.push('mention', function mention(state, silent) {
+        // it is surely not our rule, so we could stop early
+        if (!state.src || !state.pos) {
+          return false;
+        }
+
+        if (state.src[state.pos] !== '@') {
+          return false;
+        }
+
+        var match = MentionRegexp.exec(state.src.slice(state.pos));
+        if (!match) {
+          return false;
+        }
+
+        // in silent mode it shouldn't output any tokens or modify pending
+        if (!silent) {
+          state.push({
+            type: 'mention_open',
+            name: match[1],
+            id: match[2],
+            level: state.level
+          });
+
+          state.push({
+            type: 'text',
+            content: '@' + match[1],
+            level: state.level + 1
+          });
+
+          state.push({
+            type: 'mention_close',
+            level: state.level
+          });
+        }
+
+        // every rule should set state.pos to a position after token"s contents
+        state.pos += match[0].length;
+
+        return true;
+      });
+    }
+
+    var markdown = 'Test @[Rose](1)';
+    var conversionResult = markdownToDraft(markdown, {
+      remarkablePlugins: [mentionWrapper],
+      blockEntities: {
+        mention_open: function (item) {
+          return {
+            type: 'MENTION',
+            mutability: 'IMMUTABLE',
+            data: {
+              id: item.id,
+              name: item.name
+            }
+          };
+        }
+      }
+    });
+
+    expect(conversionResult.blocks[0].text).toEqual('Test @Rose');
+    expect(conversionResult.blocks[0].type).toEqual('unstyled');
+    expect(conversionResult.blocks[0].inlineStyleRanges).toEqual([]);
+    expect(conversionResult.blocks[0].entityRanges[0].offset).toEqual(5);
+    expect(conversionResult.blocks[0].entityRanges[0].length).toEqual(5);
+    var blockOneKey = conversionResult.blocks[0].entityRanges[0].key;
+    expect(conversionResult.entityMap[blockOneKey].type).toEqual('MENTION');
+    expect(conversionResult.entityMap[blockOneKey].data.id).toEqual('1');
+    expect(conversionResult.entityMap[blockOneKey].data.name).toEqual('Rose');
+  });
+
+  it('can handle block data', function () {
+    var markdown = '```js\ntest()\n```';
+    var conversionResult = markdownToDraft(markdown, {
+      blockTypes: {
+        fence: function (item) {
+          return {
+            type: 'code-block',
+            data: {
+              lang: item.params
+            }
+          }
+        }
+      }
+    });
+
+    expect(conversionResult.blocks[0].type).toEqual('code-block');
+    expect(conversionResult.blocks[0].data.lang).toEqual('js');
+  })
 });

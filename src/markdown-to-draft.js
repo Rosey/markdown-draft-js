@@ -1,69 +1,73 @@
 const Remarkable = require('remarkable');
-const md = new Remarkable();
-
 // Block level items, key is Remarkable's key for them, value returned is
-// A function that generates the raw draftjs key.
+// A function that generates the raw draftjs key and block data.
 //
 // Why a function? Because in some cases (headers) we need additional information
-// before we can determine the exact key to return.
+// before we can determine the exact key to return. And blocks may also return data
 const DefaultBlockTypes = {
   paragraph_open: function (item) {
-    return 'unstyled';
+    return {
+      type: 'unstyled'
+    };
   },
 
   blockquote_open: function (item) {
-    return 'blockquote';
+    return {
+      type: 'blockquote'
+    };
   },
 
   ordered_list_item_open: function () {
-    return 'ordered-list-item';
+    return {
+      type: 'ordered-list-item'
+    };
   },
 
   unordered_list_item_open: function () {
-    return 'unordered-list-item';
+    return {
+      type: 'unordered-list-item'
+    };
   },
 
-  fence: function () {
-    return 'code-block';
+  fence: function (item) {
+    return {
+      type: 'code-block',
+      text: item.content,
+      entityRanges: [],
+      inlineStyleRanges: []
+    };
   },
 
   heading_open: function (item) {
-    var string = 'header-';
-    switch (item.hLevel) {
-      case 1:
-        string += 'one';
-        break;
+    var type = 'header-' + ({
+      1: 'one',
+      2: 'two',
+      3: 'three',
+      4: 'four',
+      5: 'five',
+      6: 'six'
+    })[item.hLevel];
 
-      case 2:
-        string += 'two';
-        break;
-
-      case 3:
-        string += 'three';
-        break;
-
-      case 4:
-        string += 'four';
-        break;
-
-      case 5:
-        string += 'five';
-        break;
-
-      case 6:
-        string += 'six';
-        break;
-    }
-
-    return string;
+    return {
+      type: type
+    };
   }
 };
 
 // Entity types. These are things like links or images that require
 // additional data and will be added to the `entityMap`
-// again, key is remarkable key, value is draftjs raw key
+// again. In this case, key is remarkable key, value is
+// meethod that returns the draftjs key + any data needed.
 const DefaultBlockEntities = {
-  link_open: 'LINK'
+  link_open: function (item) {
+    return {
+      type: 'LINK',
+      mutability: 'MUTABLE',
+      data: {
+        url: item.href
+      }
+    };
+  }
 };
 
 // Entity styles. Simple Inline styles that aren't added to entityMap
@@ -120,13 +124,8 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
       blockInlineStyleRanges.push(styleBlock);
     } else if (BlockEntities[child.type]) {
       var key = generateUniqueKey();
-      // TODO - this only handles links, we need this to be much more customizable.
-      blockEntities[key] = {
-        type: BlockEntities[child.type],
-        data: {
-          url: child.href
-        }
-      };
+
+      blockEntities[key] = BlockEntities[child.type](child);
 
       blockEntityRanges.push({
         offset: content.length || 0,
@@ -143,7 +142,24 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
   return {content, blockEntities, blockEntityRanges, blockInlineStyleRanges};
 }
 
+/**
+ * Convert markdown into raw draftjs object
+ *
+ * @param {String} markdown - markdown to convert into raw draftjs object
+ * @param {Object} options - optional additional data, see readme for what options can be passed in.
+ *
+ * @return {Object} rawDraftObject
+**/
 function markdownToDraft(string, options = {}) {
+  const md = new Remarkable();
+
+  // If users want to define custom remarkable plugins for custom markdown, they can be added here
+  if (options.remarkablePlugins) {
+    options.remarkablePlugins.forEach(function (plugin) {
+      md.use(plugin, {});
+    });
+  }
+
   var blocks = []; // blocks will be returned as part of the final draftjs raw object
   var entityMap = {}; // entitymap will be returned as part of the final draftjs raw object
   var parsedData = md.parse(string, {}); // remarkable js takes markdown and makes it an array of style objects for us to easily parse
@@ -185,19 +201,9 @@ function markdownToDraft(string, options = {}) {
       // TODO: Draft does allow lists to be nested within lists, it's the one exception to its rule,
       // but right now this code doesn't support that.
       if (item.level === 0 || item.type === 'list_item_open') {
-        var block = {
-          type: BlockTypes[itemType](item),
+        var block = Object.assign({
           depth: 0
-        };
-
-        // Sigh edgecases.
-        // Fence block doesn't have any inline children so we have to apply the content directly,
-        // which is different from how all other blocks behave
-        if (itemType === 'fence') {
-          block.text = item.content;
-          block.inlineStyleRanges = [];
-          block.entityRanges = [];
-        }
+        }, BlockTypes[itemType](item))
 
         blocks.push(block);
       }

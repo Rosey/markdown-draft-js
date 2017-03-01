@@ -194,7 +194,7 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   // Render main block wrapping element
   if (customStyleItems[type] || StyleItems[type]) {
-    markdownString += (customStyleItems[type] || StyleItems[type]).open();
+    markdownString += (customStyleItems[type] || StyleItems[type]).open(block);
   }
 
   // Render text within content, along with any inline styles/entities
@@ -292,7 +292,7 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   // Close block level item
   if (customStyleItems[type] || StyleItems[type]) {
-    markdownString += (customStyleItems[type] || StyleItems[type]).close();
+    markdownString += (customStyleItems[type] || StyleItems[type]).close(block);
   }
 
   // Determine how many newlines to add - generally we want 2, but for list items we just want one when they are succeeded by another list item.

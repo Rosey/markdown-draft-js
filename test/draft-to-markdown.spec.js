@@ -106,4 +106,26 @@ describe('draftToMarkdown', function () {
 
     expect(markdown).toEqual('<span style="color: red">One</span><span style="color: orange">Two</span><span style="color: yellow">Three</span>')
   });
+
+  it('allows to retrieve block data', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"fb5f8","text":"","type":"atomic:image","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{"src":"https://example.com"}}]}
+    /* eslint-enable */
+    var markdown = draftToMarkdown(rawObject, {
+      styleItems: {
+        'atomic:image': {
+          open: (block) => {
+            const alt = block.data.alt || ''
+            const title = block.data.title
+              ? ` "${block.data.title}"`
+              : ''
+            return `![${alt}](${block.data.src}${title})`
+          },
+          close: () => ''
+        }
+      }
+    })
+
+    expect(markdown).toEqual('![](https://example.com)')
+  })
 });
