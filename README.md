@@ -1,6 +1,6 @@
 # Markdown draft js
 
-A tool for converting [Draft.js](https://facebook.github.io/draft-js/) [raw object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) to [markdown](https://daringfireball.net/projects/markdown/), and eventually vice-versa.
+A tool for converting [Draft.js](https://facebook.github.io/draft-js/) [raw object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) to [markdown](https://daringfireball.net/projects/markdown/), and vice-versa.
 
 **Looking for an example?** [There is a running example here](https://rosey.github.io/markdown-draft-js/)
 
@@ -15,6 +15,17 @@ It returns a string of markdown.
 import { draftToMarkdown } from 'markdown-draft-js';
 
 var markdownString = draftToMarkdown(rawObject);
+```
+
+`markdownToDraft` expects a string containing markdown.
+
+It returns a [RAW Draft.js JS object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html).
+
+```javascript
+// First, import `draftToMarkdown`
+import { markdownToDraft } from 'markdown-draft-js';
+
+var rawObject = markdownToDraft(markdownString);
 ```
 
 ## Custom Values
@@ -43,7 +54,9 @@ var markdownString = draftToMarkdown(rawObject, {
 });
 ```
 
-`red` is the value of the `style` key in the raw object. The `open` method is what precedes the actual text, and `close` is what succeeds it. Here’s another example, with a mention entity type -
+`red` is the value of the `style` key in the raw object. The `open` method is what precedes the actual text, and `close` is what succeeds it.
+
+Here’s another example, with a mention entity type -
 
 
 ```javascript
@@ -63,3 +76,27 @@ var markdownString = draftToMarkdown(rawObject, {
 ```
 
 Since entities can also contain additional custom information - in this case, the user’s id, an `entity` object is passed to the open and close methods so that you can use that information in your open/close text if you need to.
+
+What if you wanted to go the opposite direction? markdownToDraft uses [Remarkable](https://github.com/jonschlinkert/remarkable) for defining custom markdown types.
+
+In this case, you need to write a [remarkable plugin](https://github.com/jonschlinkert/remarkable/blob/master/docs/plugins.md) first and pass it in to `markdownToDraft` -
+
+```javascript
+var rawDraftJSObject = markdownToDraft(markdownString, {
+  remarkablePlugins: [remarkableMentionPlugin],
+  blockEntities: {
+    mention_open: function (item) {
+      return {
+        type: "mention",
+        mutability: "IMMUTABLE",
+        data: {
+          mention: {
+            id: item.id,
+            name: item.name
+          }
+        }
+      };
+    }
+  }
+});
+```
