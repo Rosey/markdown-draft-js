@@ -13,7 +13,8 @@ const DefaultBlockTypes = {
 
   blockquote_open: function (item) {
     return {
-      type: 'blockquote'
+      type: 'blockquote',
+      text: ''
     };
   },
 
@@ -49,7 +50,8 @@ const DefaultBlockTypes = {
     })[item.hLevel];
 
     return {
-      type: type
+      type: type,
+      text: ''
     };
   }
 };
