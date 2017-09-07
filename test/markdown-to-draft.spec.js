@@ -165,5 +165,21 @@ describe('markdownToDraft', function () {
 
     expect(conversionResult.blocks[0].type).toEqual('code-block');
     expect(conversionResult.blocks[0].data.lang).toEqual('js');
-  })
+  });
+
+  it('can handle an empty heading', function () {
+    var markdown = '#';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].type).toEqual('header-one');
+    expect(conversionResult.blocks[0].text).toEqual('');
+  });
+
+  it('can handle an empty blockquote', function () {
+    var markdown = '>';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].type).toEqual('blockquote');
+    expect(conversionResult.blocks[0].text).toEqual('');
+  });
 });
