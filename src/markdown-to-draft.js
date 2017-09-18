@@ -1,4 +1,6 @@
 const Remarkable = require('remarkable');
+const TRAILING_NEW_LINE = /\n$/;
+
 // Block level items, key is Remarkable's key for them, value returned is
 // A function that generates the raw draftjs key and block data.
 //
@@ -36,7 +38,7 @@ const DefaultBlockTypes = {
   fence: function (item) {
     return {
       type: 'code-block',
-      text: item.content || '',
+      text: (item.content || '').replace(TRAILING_NEW_LINE, ''), // remarkable seems to always append an erronious trailing newline to its codeblock content, so we need to trim it out.
       entityRanges: [],
       inlineStyleRanges: []
     };

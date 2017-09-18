@@ -2,6 +2,40 @@ import { markdownToDraft, draftToMarkdown } from '../src/index';
 import { ContentBlock, convertToRaw, convertFromHTML, ContentState } from 'draft-js';
 
 describe('markdownToDraft', function () {
+  describe ('codeblocks', function () {
+    it ('renders single-line codeblock correctly', function () {
+      var markdown = '```\nsingle line codeblock\n```';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].text).toEqual('single line codeblock');
+      expect(conversionResult.blocks[0].type).toEqual('code-block');
+    });
+
+    it ('renders single-line codeblock with a single trailing newline correctly', function () {
+      var markdown = '```\nsingle line codeblock with trailing newline\n\n```';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].text).toEqual('single line codeblock with trailing newline\n');
+      expect(conversionResult.blocks[0].type).toEqual('code-block');
+    });
+
+    it ('renders single-line codeblock wrapping newlines correctly', function () {
+      var markdown = '```\n\nsingle line codeblock with wrapping newlines\n\n```';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].text).toEqual('\nsingle line codeblock with wrapping newlines\n');
+      expect(conversionResult.blocks[0].type).toEqual('code-block');
+    });
+
+    it ('renders multi-line codeblock correctly', function () {
+      var markdown = '```\nTest \n\n here is more \n ok\n```';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].text).toEqual('Test \n\n here is more \n ok');
+      expect(conversionResult.blocks[0].type).toEqual('code-block');
+    });
+  });
+
   it('renders links correctly', function () {
     var markdown = 'This is a test of [a link](https://google.com)\n\n\n\nAnd [perhaps](https://facebook.github.io/draft-js/) we should test once more.';
     var conversionResult = markdownToDraft(markdown);
@@ -58,7 +92,7 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[5].inlineStyleRanges).toEqual([]);
     expect(conversionResult.blocks[5].entityRanges).toEqual([]);
 
-    expect(conversionResult.blocks[6].text).toEqual('A codeblock\n');
+    expect(conversionResult.blocks[6].text).toEqual('A codeblock');
     expect(conversionResult.blocks[6].type).toEqual('code-block');
     expect(conversionResult.blocks[6].inlineStyleRanges).toEqual([]);
     expect(conversionResult.blocks[6].entityRanges).toEqual([]);
