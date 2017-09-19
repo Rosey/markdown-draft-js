@@ -7,7 +7,8 @@ const Remarkable = require('remarkable');
 const DefaultBlockTypes = {
   paragraph_open: function (item) {
     return {
-      type: 'unstyled'
+      type: 'unstyled',
+      text: ''
     };
   },
 
@@ -20,20 +21,22 @@ const DefaultBlockTypes = {
 
   ordered_list_item_open: function () {
     return {
-      type: 'ordered-list-item'
+      type: 'ordered-list-item',
+      text: ''
     };
   },
 
   unordered_list_item_open: function () {
     return {
-      type: 'unordered-list-item'
+      type: 'unordered-list-item',
+      text: ''
     };
   },
 
   fence: function (item) {
     return {
       type: 'code-block',
-      text: item.content,
+      text: item.content || '',
       entityRanges: [],
       inlineStyleRanges: []
     };

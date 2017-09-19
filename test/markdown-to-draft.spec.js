@@ -182,4 +182,20 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].type).toEqual('blockquote');
     expect(conversionResult.blocks[0].text).toEqual('');
   });
+
+  it('can handle an empty unordered list item', function () {
+    var markdown = '-';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].type).toEqual('unordered-list-item');
+    expect(conversionResult.blocks[0].text).toEqual('');
+  });
+
+  it('can handle an ordered empty list item', function () {
+    var markdown = '1.';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
+    expect(conversionResult.blocks[0].text).toEqual('');
+  });
 });
