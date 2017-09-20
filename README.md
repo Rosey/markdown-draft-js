@@ -100,3 +100,13 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
   }
 });
 ```
+
+Since this module uses remarkable under the hood, you can also pass down options for the remarkable parser, simply add the property `remarkableOptions` to your options object. For example, let's say you wanted to parse html as well:
+
+```javascript
+var rawDraftJSObject = markdownToDraft(markdownString, {
+  remarkableOptions: {
+    html: true
+  }
+});
+```
