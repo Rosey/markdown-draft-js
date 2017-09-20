@@ -156,7 +156,7 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
  * @return {Object} rawDraftObject
 **/
 function markdownToDraft(string, options = {}) {
-  const md = new Remarkable();
+  const md = new Remarkable(options.remarkableOptions);
 
   // If users want to define custom remarkable plugins for custom markdown, they can be added here
   if (options.remarkablePlugins) {
