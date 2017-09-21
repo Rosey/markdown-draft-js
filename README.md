@@ -6,6 +6,8 @@ A tool for converting [Draft.js](https://facebook.github.io/draft-js/) [raw obje
 
 ## Basic Usage
 
+Please note: We recommend using a polyfill (like babel-polyfill) since we're using a bunch of modern array methods.
+
 `draftToMarkdown` expects a [RAW Draft.js JS object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html).
 
 It returns a string of markdown.  
