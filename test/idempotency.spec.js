@@ -1,5 +1,4 @@
 import { markdownToDraft, draftToMarkdown } from '../src/index';
-import { ContentBlock, convertToRaw, convertFromHTML, ContentState } from 'draft-js';
 
 /*
  * Note: These tests are to make sure markdown to draft and then back to markdown have the exact same value before-and-after

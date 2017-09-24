@@ -1,5 +1,4 @@
 import { markdownToDraft, draftToMarkdown } from '../src/index';
-import { ContentBlock, convertToRaw, convertFromHTML, ContentState } from 'draft-js';
 
 describe('markdownToDraft', function () {
   describe ('codeblocks', function () {

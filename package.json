@@ -42,8 +42,7 @@
     "karma-browserify": "5.1.0",
     "karma-chrome-launcher": "2.0.0",
     "karma-jasmine": "1.0.2",
-    "watchify": "3.7.0",
-    "draft-js": "0.9.1"
+    "watchify": "3.7.0"
   },
   "dependencies": {
     "remarkable": "1.7.1"
