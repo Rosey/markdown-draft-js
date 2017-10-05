@@ -1,4 +1,4 @@
-const SINGLE_SPACE_CHARACTER = /\u0020*$/;
+const TRAILING_WHITESPACE = /[ |\u0020|\t]*$/;
 
 // A map of draftjs block types -> markdown open and close characters
 // Both the open and close methods must exist, even if they simply return an empty string.
@@ -199,11 +199,6 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   // Render text within content, along with any inline styles/entities
   Array.from(block.text).some(function (character, characterIndex) {
-    var initialMarkdownStringLength = markdownString.length;
-    markdownString = markdownString.replace(SINGLE_SPACE_CHARACTER, '');
-    var newMarkdownStringLength = markdownString.length;
-    var totalSpacesToReadd = initialMarkdownStringLength - newMarkdownStringLength;
-
     // Close any entity tags that need closing
     block.entityRanges.forEach(function (range, rangeIndex) {
       if (range.offset + range.length === characterIndex) {
@@ -224,13 +219,21 @@ function renderBlock(block, index, rawDraftObject, options) {
             for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
               var styleItem = (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]);
               if (styleItem) {
+                var trailingWhitespace = TRAILING_WHITESPACE.exec(markdownString);
+                markdownString = markdownString.slice(0, markdownString.length - trailingWhitespace[0].length);
                 markdownString += styleItem.close();
+                markdownString += trailingWhitespace[0];
               }
             }
           }
 
           // Close the actual inline style being closed
+          // Have to trim whitespace first and then re-add after because markdown can't handle leading/trailing whitespace
+          var trailingWhitespace = TRAILING_WHITESPACE.exec(markdownString);
+          markdownString = markdownString.slice(0, markdownString.length - trailingWhitespace[0].length);
+
           markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
+          markdownString += trailingWhitespace[0];
 
           // Handle nested case - reopen any inline styles after closing the parent
           if (styleIndex > -1 && styleIndex !== openInlineStyles.length - 1) {
@@ -246,11 +249,6 @@ function renderBlock(block, index, rawDraftObject, options) {
         }
       }
     });
-
-    // We removed trailing whitespace before closing markdown tags because
-    // markdown doesn't play nice with trailing whitespace.
-    // But we want to preserve it, so we re-add it after closing all tags.
-    markdownString += ' '.repeat(totalSpacesToReadd);
 
     // Open any inline tags that need opening
     block.inlineStyleRanges.forEach(function (style, styleIndex) {
