@@ -1,6 +1,33 @@
 import { markdownToDraft, draftToMarkdown } from '../src/index';
 
 describe('draftToMarkdown', function () {
+  it('renders inline styled text with trailing whitespace correctly', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"Test Bold Text Test","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":5,"length":10,"style":"BOLD"}],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('Test **Bold Text** Test');
+  });
+
+  it('renders inline styled text with trailing whitespace correctly when trailing whitespace is the last character', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"Test Bold Text ","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":5,"length":10,"style":"BOLD"}],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('Test **Bold Text** ');
+  });
+
+  it('renders nested inline styled text with trailing whitespace correctly', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"Test Bold Text Test","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":10,"style":"ITALIC"},{"offset":5,"length":9,"style":"BOLD"}],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('_Test **Bold**_ **Text** Test');
+  });
+
   it('renders links correctly', function () {
     /* eslint-disable */
     var rawObject = {"entityMap":{"0":{"type":"LINK","mutability":"MUTABLE","data":{"url":"https://google.com"}},"1":{"type":"LINK","mutability":"MUTABLE","data":{"url":"https://facebook.github.io/draft-js/"}}},"blocks":[{"key":"58spd","text":"This is a test of a link","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":18,"length":6,"key":0}],"data":{}},{"key":"9ln6g","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"3euar","text":"And perhaps we should test once more.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":4,"length":7,"key":1}],"data":{}}]};
