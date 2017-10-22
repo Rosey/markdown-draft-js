@@ -217,6 +217,13 @@ function markdownToDraft(string, options = {}) {
     }
   });
 
+  // EditorState.createWithContent will error if there's no blocks defined
+  // Remarkable returns an empty array though. So we have to generate a 'fake'
+  // empty block in this case. 😑
+  if (!blocks.length) {
+    blocks.push(DefaultBlockTypes.paragraph_open());
+  }
+
   return {
     entityMap,
     blocks

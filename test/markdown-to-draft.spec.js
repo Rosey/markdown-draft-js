@@ -2,6 +2,14 @@ import { markdownToDraft, draftToMarkdown } from '../src/index';
 
 describe('markdownToDraft', function () {
   describe ('codeblocks', function () {
+    it('renders empty text correctly', function () {
+      var markdown = '';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].text).toEqual('');
+      expect(conversionResult.blocks[0].type).toEqual('unstyled');
+    });
+
     it ('renders single-line codeblock correctly', function () {
       var markdown = '```\nsingle line codeblock\n```';
       var conversionResult = markdownToDraft(markdown);
