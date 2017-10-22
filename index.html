@@ -49,6 +49,7 @@
         width: 90%;
         max-width: 800px;
         margin: 20px auto;
+        line-height: 1.5;
       }
 
       .editor, .markdown-results {
@@ -62,12 +63,21 @@
         white-space: pre-wrap;
       }
 
-      .RichEditor-root {
+      .editor {
+        margin-top: 20px;
+      }
+
+      .RichEditor-root, textarea {
         background: #fff;
         border: 1px solid #ddd;
         font-family: 'Georgia', serif;
         font-size: 14px;
         padding: 15px;
+      }
+
+      textarea {
+        width: 350px;
+        height: 300px
       }
 
       .RichEditor-editor {
