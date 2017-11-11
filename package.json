@@ -2,7 +2,7 @@
   "name": "markdown-draft-js",
   "description": "Convert draftjs blocks to markdown using the marked library, and vice versa.",
   "author": "Rose Robertson",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "license": "MIT",
   "repository": {
     "type": "git",
