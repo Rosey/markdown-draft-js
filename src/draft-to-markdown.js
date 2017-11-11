@@ -185,7 +185,8 @@ const SingleNewlineAfterBlock = [
  * @return {String} markdown string
 **/
 function renderBlock(block, index, rawDraftObject, options) {
-  var openInlineStyles = [];
+  var openInlineStyles = [],
+      markdownToAdd = [];
   var markdownString = '',
       customStyleItems = options.styleItems || {},
       customEntityItems = options.entityItems || {};
@@ -254,8 +255,12 @@ function renderBlock(block, index, rawDraftObject, options) {
     block.inlineStyleRanges.forEach(function (style, styleIndex) {
       if (style.offset === characterIndex) {
         if ((customStyleItems[style.style] || StyleItems[style.style])) {
-          markdownString += (customStyleItems[style.style] || StyleItems[style.style]).open();
-          openInlineStyles.push(style);
+          var styleToAdd = (customStyleItems[style.style] || StyleItems[style.style]).open();
+          markdownToAdd.push({
+            type: 'style',
+            style: style,
+            value: styleToAdd
+          });
         }
       }
     });
@@ -265,10 +270,32 @@ function renderBlock(block, index, rawDraftObject, options) {
       if (range.offset === characterIndex) {
         var entity = rawDraftObject.entityMap[range.key];
         if (customEntityItems[entity.type] || EntityItems[entity.type]) {
-          markdownString += (customEntityItems[entity.type] || EntityItems[entity.type]).open(entity);
+          var entityToAdd = (customEntityItems[entity.type] || EntityItems[entity.type]).open(entity);
+          markdownToAdd.push({
+            type: 'entity',
+            value: entityToAdd
+          });
         }
       }
     });
+
+    // These are all the opening entity and style types being added to the markdown string for this loop
+    // we store in an array and add here because if the character is WS character, we want to hang onto it and not apply it until the next non-whitespace
+    // character before adding the markdown, since markdown doesn’t play nice with leading whitespace (eg '** bold**' is no  good, whereas ' **bold**' is good.)
+    if (character !== ' ' && markdownToAdd.length) {
+      markdownString += markdownToAdd.map(function (item) {
+        return item.value;
+      }).join('');
+
+      markdownToAdd.forEach(function (item) {
+        if (item.type === 'style') {
+          // We hang on to this because we may need to close it early and then re-open if there are nested styles being opened and closed.
+          openInlineStyles.push(item.style);
+        }
+      });
+
+      markdownToAdd = [];
+    }
 
     markdownString += character;
   });
