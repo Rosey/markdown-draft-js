@@ -1,6 +1,15 @@
 import { markdownToDraft, draftToMarkdown } from '../src/index';
 
 describe('draftToMarkdown', function () {
+  it('renders inline styled text with leading whitespace correctly', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"Test Bold Text Test","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":4,"length":10,"style":"BOLD"}],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('Test **Bold Text** Test');
+  });
+
   it('renders inline styled text with trailing whitespace correctly', function () {
     /* eslint-disable */
     var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"Test Bold Text Test","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":5,"length":10,"style":"BOLD"}],"entityRanges":[],"data":{}}]};
