@@ -105,6 +105,11 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
 });
 ```
 
+
+## Additional options
+
+### Remarkable options
+
 Since this module uses remarkable under the hood, you can also pass down options for the remarkable parser, simply add the property `remarkableOptions` to your options object. For example, let's say you wanted to parse html as well:
 
 ```javascript
@@ -114,3 +119,9 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
   }
 });
 ```
+
+### More options
+
+`preserveNewlines` can be passed in to preserve empty whitespace newlines. By default, markdown rules specify that blank whitespace is collapsed, but in the interest in maintaining 1:1 parity with draft appearance-wise, this option can be turned on if you like :)  
+
+NOTE: If you plan on passing the markdown to a 3rd party markdown parser, markdown default behaviour IS to strip additional newlines, so the HTML it generates will likely strip those newlines at that point.... Which is why this is an option disabled by default.

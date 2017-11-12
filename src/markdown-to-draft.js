@@ -10,7 +10,9 @@ const DefaultBlockTypes = {
   paragraph_open: function (item) {
     return {
       type: 'unstyled',
-      text: ''
+      text: '',
+      entityRanges: [],
+      inlineStyleRanges: []
     };
   },
 
@@ -171,6 +173,7 @@ function markdownToDraft(string, options = {}) {
   var entityMap = {}; // entitymap will be returned as part of the final draftjs raw object
   var parsedData = md.parse(string, {}); // remarkable js takes markdown and makes it an array of style objects for us to easily parse
   var currentListType = null; // Because of how remarkable's data is formatted, we need to cache what kind of list we're currently dealing with
+  var previousBlockEndingLine = 1;
 
   // Allow user to define custom BlockTypes and Entities if they so wish
   const BlockTypes = Object.assign({}, DefaultBlockTypes, options.blockTypes || {});
@@ -178,7 +181,6 @@ function markdownToDraft(string, options = {}) {
   const BlockStyles = Object.assign({}, DefaultBlockStyles, options.blockStyles || {});
 
   parsedData.forEach(function (item) {
-
     // Because of how remarkable's data is formatted, we need to cache what kind of list we're currently dealing with
     if (item.type === 'bullet_list_open') {
       currentListType = 'unordered_list_item_open';
@@ -212,8 +214,26 @@ function markdownToDraft(string, options = {}) {
           depth = Math.floor(item.level / 2);
         }
 
-        var block = Object.assign({ depth: depth }, BlockTypes[itemType](item));
+        var block = Object.assign({
+          depth: depth
+        }, BlockTypes[itemType](item));
 
+        if (options.preserveNewlines) {
+          // Re: previousBlockEndingLine.... omg.
+          // So remarkable strips out empty newlines and doesn't make any entities to parse to restore them
+          // the only solution I could find is that there's a 2-value array on each block item called "lines" which is the start end line of the block element.
+          // by keeping track of the PREVIOUS block element ending line and the NEXT block element starting line, we can find the difference between the new lines and insert
+          // an appropriate number of extra paragraphs to re-create those newlines in draftjs.
+          // This is probably my least favourite thing in this file, but not sure what could be better.
+          if (previousBlockEndingLine) {
+            var totalEmptyParagraphsToCreate = item.lines[0] - previousBlockEndingLine;
+            for (var i = 0; i < totalEmptyParagraphsToCreate; i++) {
+              blocks.push(DefaultBlockTypes.paragraph_open());
+            }
+          }
+        }
+
+        previousBlockEndingLine = item.lines[1] + 1;
         blocks.push(block);
       }
     }

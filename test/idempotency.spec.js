@@ -14,6 +14,15 @@ import { markdownToDraft, draftToMarkdown } from '../src/index';
 */
 
 describe('idempotency', function () {
+
+  it('renders new lines text correctly', function () {
+    var markdownString = 'Test\n\n\nHello There\n\nSmile\n\n\n\n\n\n\n\nYep Hi';
+    var draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
+    var markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
+
+    expect(markdownFromDraft).toEqual(markdownString);
+  });
+
   it('renders italic text correctly', function () {
     var markdownString = '_I am italic_ …I am not italic.';
     var draftJSObject = markdownToDraft(markdownString);
