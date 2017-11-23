@@ -211,7 +211,7 @@ function renderBlock(block, index, rawDraftObject, options) {
     });
 
     // Close any inline tags that need closing
-    block.inlineStyleRanges.forEach(function (style, styleIndex) {
+    openInlineStyles.forEach(function (style, styleIndex) {
       if (style.offset + style.length === characterIndex) {
         if ((customStyleItems[style.style] || StyleItems[style.style])) {
           var styleIndex = openInlineStyles.indexOf(style);
@@ -240,8 +240,10 @@ function renderBlock(block, index, rawDraftObject, options) {
           if (styleIndex > -1 && styleIndex !== openInlineStyles.length - 1) {
             for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
               var styleItem = (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]);
-              if (styleItem) {
+              if (styleItem && openInlineStyles[i].offset + openInlineStyles[i].length > characterIndex) {
                 markdownString += styleItem.open();
+              } else {
+                openInlineStyles.splice(i, 1);
               }
             }
           }
