@@ -35,6 +35,13 @@ describe('draftToMarkdown', function () {
 
     var markdown = draftToMarkdown(rawObject);
     expect(markdown).toEqual('_Test **Bold**_ **Text** Test');
+
+    /* eslint-disable */
+    rawObject = {"entityMap":{},"blocks":[{"key":"84jcj","text":"bold/italic plain","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":11,"style":"BOLD"},{"offset":0,"length":11,"style":"ITALIC"}],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('**_bold/italic_** plain');
   });
 
   it('renders links correctly', function () {
