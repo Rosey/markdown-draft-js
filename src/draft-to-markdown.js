@@ -195,6 +195,10 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   // Render main block wrapping element
   if (customStyleItems[type] || StyleItems[type]) {
+    if (block.type === 'unordered-list-item' || block.type === 'ordered-list-item') {
+      markdownString += ' '.repeat(block.depth * 4);
+    }
+
     markdownString += (customStyleItems[type] || StyleItems[type]).open(block);
   }
 

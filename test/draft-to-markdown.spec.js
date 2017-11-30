@@ -170,4 +170,22 @@ describe('draftToMarkdown', function () {
 
     expect(markdown).toEqual('![](https://example.com)')
   })
+
+  it('renders nested unordered lists', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"fqn68","text":"item","type":"unordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"5p96k","text":"item","type":"unordered-list-item","depth":1,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+    var markdown = draftToMarkdown(rawObject);
+
+    expect(markdown).toEqual('- item\n    - item');
+  });
+
+  it('renders nested ordered lists', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"d9c1d","text":"item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"meoh","text":"item","type":"ordered-list-item","depth":1,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+    var markdown = draftToMarkdown(rawObject);
+
+    expect(markdown).toEqual('1. item\n    1. item');
+  });
 });
