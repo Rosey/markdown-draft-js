@@ -204,13 +204,15 @@ function markdownToDraft(string, options = {}) {
       Object.assign(entityMap, blockEntities);
     } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence') && BlockTypes[itemType]) {
       // Draftjs only supports 1 level of blocks, hence the item.level === 0 check
-      // List items will always be at least `level==1` though so we need a separate check fo rthat
-      // TODO: Draft does allow lists to be nested within lists, it's the one exception to its rule,
-      // but right now this code doesn't support that.
+      // List items will always be at least `level==1` though so we need a separate check for that
       if (item.level === 0 || item.type === 'list_item_open') {
-        var block = Object.assign({
-          depth: 0
-        }, BlockTypes[itemType](item))
+        var depth = 0;
+
+        if (item.level > 0) {
+          depth = Math.floor(item.level / 2);
+        }
+
+        var block = Object.assign({ depth: depth }, BlockTypes[itemType](item));
 
         blocks.push(block);
       }

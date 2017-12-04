@@ -239,4 +239,24 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
     expect(conversionResult.blocks[0].text).toEqual('');
   });
+
+  it('can handle nested unordered lists', function () {
+    var markdown = '- item\n    - item';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].type).toEqual('unordered-list-item');
+    expect(conversionResult.blocks[0].depth).toEqual(0);
+    expect(conversionResult.blocks[1].type).toEqual('unordered-list-item');
+    expect(conversionResult.blocks[1].depth).toEqual(1);
+  });
+
+  it('can handle nested ordered lists', function () {
+    var markdown = '1. item\n    1. item';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
+    expect(conversionResult.blocks[0].depth).toEqual(0);
+    expect(conversionResult.blocks[1].type).toEqual('ordered-list-item');
+    expect(conversionResult.blocks[1].depth).toEqual(1);
+  });
 });
