@@ -196,7 +196,8 @@ const DraftEditor = ReactCreateClass({
               <Editor
                 editorState={editorState}
                 handleKeyCommand={this.handleKeyCommand}
-                onChange={this.onChange} />
+                onChange={this.onChange}
+                onTab={this.onTab} />
             </div>
           </div>
 
