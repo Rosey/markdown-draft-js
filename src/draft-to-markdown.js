@@ -333,7 +333,11 @@ function renderBlock(block, index, rawDraftObject, options) {
   if (SingleNewlineAfterBlock.indexOf(type) !== -1 && rawDraftObject.blocks[index + 1] && SingleNewlineAfterBlock.indexOf(rawDraftObject.blocks[index + 1].type) !== -1) {
     markdownString += '\n';
   } else if (rawDraftObject.blocks[index + 1]) {
-    markdownString += '\n\n';
+    if (rawDraftObject.blocks[index].text) {
+      markdownString += '\n\n';
+    } else if (options.preserveNewlines) {
+      markdownString += '\n';
+    }
   }
 
   return markdownString;
