@@ -259,4 +259,12 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[1].type).toEqual('ordered-list-item');
     expect(conversionResult.blocks[1].depth).toEqual(1);
   });
+
+  it('can handle nested styles', function () {
+    var markdown = '__*hello* world__';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].inlineStyleRanges[0].length).toBe(11);
+    expect(conversionResult.blocks[0].inlineStyleRanges[1].length).toBe(5);
+  });
 });
