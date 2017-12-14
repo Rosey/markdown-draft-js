@@ -260,7 +260,7 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[1].depth).toEqual(1);
   });
 
-  fit('can handle nested styles', function () {
+  it('can handle nested styles', function () {
     var markdown = '__*hello* world__';
     var conversionResult = markdownToDraft(markdown);
 
@@ -270,8 +270,36 @@ describe('markdownToDraft', function () {
     markdown = '**bold _bolditalic_** _italic_ regular';
     conversionResult = markdownToDraft(markdown);
 
-    // Expected ouput in comment -
-    // {"entityMap":{},"blocks":[{"key":"adnm7","text":"bold bolditalic italic regular","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":16,"style":"BOLD"},{"offset":5,"length":17,"style":"ITALIC"}],"entityRanges":[],"data":{}}]}
+    // Expected ouput in comment below.
+    // because markdown forces you to close and re-open when nesting, and draft doesn't, I don't know if this exact expected output is realistic
+    // or if it should actually more closesly match how markdown works. May be easier to more closely match markdown, so long as the appearance is the same
+    // Currently the output given doesn't have the correct styling appearance-wise. You can also see this in the 'renders nested styles correctly' test added to idempotency
+    // {
+    //    "entityMap" : {},
+    //    "blocks" : [
+    //       {
+    //          "depth" : 0,
+    //          "type" : "unstyled",
+    //          "key" : "adnm7",
+    //          "inlineStyleRanges" : [
+    //             {
+    //                "offset" : 0,
+    //                "length" : 16,
+    //                "style" : "BOLD"
+    //             },
+    //             {
+    //                "style" : "ITALIC",
+    //                "length" : 17,
+    //                "offset" : 5
+    //             }
+    //          ],
+    //          "data" : {},
+    //          "text" : "bold bolditalic italic regular",
+    //          "entityRanges" : []
+    //       }
+    //    ]
+    // }
+
     expect(conversionResult.blocks[0].inlineStyleRanges[0].offset).toEqual(0);
     expect(conversionResult.blocks[0].inlineStyleRanges[0].length).toEqual(16);
     expect(conversionResult.blocks[0].inlineStyleRanges[1].offset).toEqual(5);
