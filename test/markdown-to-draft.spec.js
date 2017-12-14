@@ -260,11 +260,22 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[1].depth).toEqual(1);
   });
 
-  it('can handle nested styles', function () {
+  fit('can handle nested styles', function () {
     var markdown = '__*hello* world__';
     var conversionResult = markdownToDraft(markdown);
 
     expect(conversionResult.blocks[0].inlineStyleRanges[0].length).toBe(11);
     expect(conversionResult.blocks[0].inlineStyleRanges[1].length).toBe(5);
+
+    markdown = '**bold _bolditalic_** _italic_ regular';
+    conversionResult = markdownToDraft(markdown);
+
+    // Expected ouput in comment -
+    // {"entityMap":{},"blocks":[{"key":"adnm7","text":"bold bolditalic italic regular","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":16,"style":"BOLD"},{"offset":5,"length":17,"style":"ITALIC"}],"entityRanges":[],"data":{}}]}
+    expect(conversionResult.blocks[0].inlineStyleRanges[0].offset).toEqual(0);
+    expect(conversionResult.blocks[0].inlineStyleRanges[0].length).toEqual(16);
+    expect(conversionResult.blocks[0].inlineStyleRanges[1].offset).toEqual(5);
+    expect(conversionResult.blocks[0].inlineStyleRanges[1].length).toEqual(17);
+    expect(conversionResult.blocks[0].text).toEqual('bold bolditalic italic regular');
   });
 });
