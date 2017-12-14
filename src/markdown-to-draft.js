@@ -134,6 +134,8 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
     } else if (BlockEntities[child.type]) {
       var key = generateUniqueKey();
 
+      blockEntities[key] = BlockEntities[child.type](child);
+
       blockEntityRanges.push({
         offset: content.length || 0,
         length: 0,
