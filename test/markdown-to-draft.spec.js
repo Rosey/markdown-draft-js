@@ -259,4 +259,47 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[1].type).toEqual('ordered-list-item');
     expect(conversionResult.blocks[1].depth).toEqual(1);
   });
+
+  it('can handle simple nested styles', function () {
+    var markdown = '__*hello* world__';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].inlineStyleRanges[0].length).toBe(11);
+    expect(conversionResult.blocks[0].inlineStyleRanges[1].length).toBe(5);
+
+  });
+
+  it('can handle more complex nested styles', function () {
+    var markdown = '**bold _bolditalic_** _italic_ regular';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult).toEqual({
+      'entityMap': {},
+      'blocks': [
+        {
+          'depth': 0,
+          'type': 'unstyled',
+          'text': 'bold bolditalic italic regular',
+          'entityRanges': [],
+          'inlineStyleRanges': [
+            {
+              'offset': 0,
+              'length': 15,
+              'style': 'BOLD'
+            },
+            {
+              'offset': 5,
+              'length': 10,
+              'style': 'ITALIC'
+            },
+            {
+              'offset': 16,
+              'length': 6,
+              'style': 'ITALIC'
+            }
+          ]
+        }
+      ]
+    });
+  });
 });

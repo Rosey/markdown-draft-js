@@ -39,6 +39,14 @@ describe('idempotency', function () {
     expect(markdownFromDraft).toEqual(markdownString);
   });
 
+  it('renders nested styles correctly', function () {
+    var markdownString = '**bold** _italic_ test **bold _italic_** _italic_ _italic **bold** italic **bold italic**_';
+    var draftJSObject = markdownToDraft(markdownString);
+    var markdownFromDraft = draftToMarkdown(draftJSObject);
+
+    expect(markdownFromDraft).toEqual(markdownString);
+  });
+
   it('renders inline code correctly', function () {
     var markdownString = 'Test `here is some inline code`';
     var draftJSObject = markdownToDraft(markdownString);
