@@ -144,7 +144,14 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
     } else if (child.type.indexOf('_close') !== -1 && BlockEntities[child.type.replace('_close', '_open')]) {
       blockEntityRanges[blockEntityRanges.length - 1].length = content.length - blockEntityRanges[blockEntityRanges.length - 1].offset;
     } else if (child.type.indexOf('_close') !== -1 && BlockStyles[child.type.replace('_close', '_open')]) {
-      blockInlineStyleRanges[blockInlineStyleRanges.length - 1].length = content.length - blockInlineStyleRanges[blockInlineStyleRanges.length - 1].offset;
+      var type = BlockStyles[child.type.replace('_close', '_open')]
+      blockInlineStyleRanges = blockInlineStyleRanges
+        .map(style => {
+          if (style.length === 0 && style.style === type) {
+            style.length = content.length - style.offset;
+          }
+          return style;
+        });
     }
   });
 
