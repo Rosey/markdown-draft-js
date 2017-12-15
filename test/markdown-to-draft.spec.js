@@ -260,50 +260,46 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[1].depth).toEqual(1);
   });
 
-  it('can handle nested styles', function () {
+  it('can handle simple nested styles', function () {
     var markdown = '__*hello* world__';
     var conversionResult = markdownToDraft(markdown);
 
     expect(conversionResult.blocks[0].inlineStyleRanges[0].length).toBe(11);
     expect(conversionResult.blocks[0].inlineStyleRanges[1].length).toBe(5);
 
-    markdown = '**bold _bolditalic_** _italic_ regular';
-    conversionResult = markdownToDraft(markdown);
+  });
 
-    // Expected ouput in comment below.
-    // because markdown forces you to close and re-open when nesting, and draft doesn't, I don't know if this exact expected output is realistic
-    // or if it should actually more closesly match how markdown works. May be easier to more closely match markdown, so long as the appearance is the same
-    // Currently the output given doesn't have the correct styling appearance-wise. You can also see this in the 'renders nested styles correctly' test added to idempotency
-    // {
-    //    "entityMap" : {},
-    //    "blocks" : [
-    //       {
-    //          "depth" : 0,
-    //          "type" : "unstyled",
-    //          "key" : "adnm7",
-    //          "inlineStyleRanges" : [
-    //             {
-    //                "offset" : 0,
-    //                "length" : 16,
-    //                "style" : "BOLD"
-    //             },
-    //             {
-    //                "style" : "ITALIC",
-    //                "length" : 17,
-    //                "offset" : 5
-    //             }
-    //          ],
-    //          "data" : {},
-    //          "text" : "bold bolditalic italic regular",
-    //          "entityRanges" : []
-    //       }
-    //    ]
-    // }
+  it('can handle more complex nested styles', function () {
+    var markdown = '**bold _bolditalic_** _italic_ regular';
+    var conversionResult = markdownToDraft(markdown);
 
-    expect(conversionResult.blocks[0].inlineStyleRanges[0].offset).toEqual(0);
-    expect(conversionResult.blocks[0].inlineStyleRanges[0].length).toEqual(16);
-    expect(conversionResult.blocks[0].inlineStyleRanges[1].offset).toEqual(5);
-    expect(conversionResult.blocks[0].inlineStyleRanges[1].length).toEqual(17);
-    expect(conversionResult.blocks[0].text).toEqual('bold bolditalic italic regular');
+    expect(conversionResult).toEqual({
+      'entityMap': {},
+      'blocks': [
+        {
+          'depth': 0,
+          'type': 'unstyled',
+          'text': 'bold bolditalic italic regular',
+          'entityRanges': [],
+          'inlineStyleRanges': [
+            {
+              'offset': 0,
+              'length': 15,
+              'style': 'BOLD'
+            },
+            {
+              'offset': 5,
+              'length': 10,
+              'style': 'ITALIC'
+            },
+            {
+              'offset': 16,
+              'length': 6,
+              'style': 'ITALIC'
+            }
+          ]
+        }
+      ]
+    });
   });
 });

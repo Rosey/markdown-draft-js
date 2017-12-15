@@ -148,7 +148,7 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
       blockInlineStyleRanges = blockInlineStyleRanges
         .map(style => {
           if (style.length === 0 && style.style === type) {
-            style.length = content.length - blockInlineStyleRanges[blockInlineStyleRanges.length - 1].offset;
+            style.length = content.length - style.offset;
           }
           return style;
         });
