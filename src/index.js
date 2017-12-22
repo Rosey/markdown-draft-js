@@ -4,7 +4,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const ReactCreateClass = require('create-react-class');
 
-import {Editor, EditorState, ContentState, RichUtils, convertToRaw, convertFromRaw} from 'draft-js';
+import {Editor, EditorState, ContentState, RichUtils, convertToRaw, convertFromRaw, CompositeDecorator} from 'draft-js';
 // Custom overrides for "code" style.
 
 window.convertFromRaw = convertFromRaw;
@@ -12,6 +12,7 @@ window.convertToRaw = convertToRaw;
 window.markdownToDraft = markdownToDraft;
 window.ContentState = ContentState;
 window.EditorState = EditorState;
+window.RichUtils = RichUtils;
 
 const styleMap = {
   CODE: {
@@ -51,6 +52,35 @@ class StyleButton extends React.Component {
     );
   }
 }
+
+const Link = (props) => {
+  const {url} = props.contentState.getEntity(props.entityKey).getData();
+  return (
+    <a href={url}>
+      {props.children}
+    </a>
+  );
+};
+
+function findLinkEntities(contentBlock, callback, contentState) {
+  contentBlock.findEntityRanges(
+    (character) => {
+      const entityKey = character.getEntity();
+      return (
+        entityKey !== null &&
+        contentState.getEntity(entityKey).getType() === 'LINK'
+      );
+    },
+    callback
+  );
+}
+
+const decorator = new CompositeDecorator([
+  {
+    strategy: findLinkEntities,
+    component: Link,
+  },
+]);
 
 const BLOCK_TYPES = [
       {label: 'H1', style: 'header-one'},
@@ -116,7 +146,7 @@ const DraftEditor = ReactCreateClass({
 
     getInitialState: function () {
       return {
-        editorState: EditorState.createEmpty(),
+        editorState: EditorState.createEmpty(decorator),
         markdown: ''
       };
     },
@@ -149,7 +179,7 @@ const DraftEditor = ReactCreateClass({
 
     onTextareaChange: function (e) {
       var markdown = e.target.value;
-      var editorState = EditorState.createWithContent(convertFromRaw(markdownToDraft(markdown)));
+      var editorState = EditorState.createWithContent(convertFromRaw(markdownToDraft(markdown)), decorator);
       this.setState({editorState, markdown});
     },
 
