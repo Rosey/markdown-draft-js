@@ -100,15 +100,20 @@
         line-height: 1.5;
       }
 
-      .editor, .markdown-results {
+      .draftjs-results, .markdown-results {
         width: 50%;
         float: left;
         box-sizing: border-box;
-        padding: 15px;
+        padding: 15px 0;
       }
 
       .markdown-results {
         white-space: pre-wrap;
+        padding-left: 20px;
+      }
+
+      .markdown-results textarea {
+        margin-top: 4px;
       }
 
       .editor {
@@ -142,7 +147,7 @@
       }
 
       .RichEditor-editor .public-DraftEditor-content {
-        min-height: 100px;
+        min-height: 194px;
       }
 
       .RichEditor-hidePlaceholder .public-DraftEditorPlaceholder-root {
@@ -178,6 +183,18 @@
         margin-right: 16px;
         padding: 2px 0;
         display: inline-block;
+      }
+
+      .RichEditor-styleButton.bold {
+        font-weight: bold;
+      }
+
+      .RichEditor-styleButton.italic {
+        font-style: italic;
+      }
+
+      .RichEditor-styleButton.monospace {
+        font-family: monospace;
       }
 
       .RichEditor-activeButton {

@@ -45,6 +45,8 @@ class StyleButton extends React.Component {
       className += ' RichEditor-activeButton';
     }
 
+    className += ' ' + this.props.label.toLowerCase();
+
     return (
       <span className={className} onMouseDown={this.onToggle}>
         {this.props.label}
@@ -120,7 +122,6 @@ const BlockStyleControls = (props) => {
 var INLINE_STYLES = [
   {label: 'Bold', style: 'BOLD'},
   {label: 'Italic', style: 'ITALIC'},
-  {label: 'Underline', style: 'UNDERLINE'},
   {label: 'Monospace', style: 'CODE'},
 ];
 
@@ -212,31 +213,37 @@ const DraftEditor = ReactCreateClass({
         <div className="draft-js-editor-wrapper">
           <h1>Draftjs to markdown conversion example</h1>
           <p>Sorry, this example is a bit of a mess right now 🙃 will clean it up eventually! But try it out here, and check out the source <a href="https://github.com/Rosey/markdown-draft-js">on github</a>.</p>
-          <div className="editor RichEditor-root">
-            <h1>Type in the editor below</h1>
-            <BlockStyleControls
-                editorState={editorState}
-                onToggle={this.toggleBlockType}
-              />
-              <InlineStyleControls
-                editorState={editorState}
-                onToggle={this.toggleInlineStyle}
-              />
-            <div className="RichEditor-editor">
-              <Editor
-                editorState={editorState}
-                handleKeyCommand={this.handleKeyCommand}
-                onChange={this.onChange}
-                onTab={this.onTab} />
-            </div>
-          </div>
 
-          <div className="markdown-results">
-            <h1>Markdown Results</h1>
-            <textarea
-              onChange={this.onTextareaChange}
-              value={this.state.markdown}
-            />
+          <div className="editor-wrapper">
+            <div className="draftjs-results">
+              <h1>Draft.js Editor</h1>
+              <div className="editor RichEditor-root">
+
+                <BlockStyleControls
+                    editorState={editorState}
+                    onToggle={this.toggleBlockType}
+                  />
+                  <InlineStyleControls
+                    editorState={editorState}
+                    onToggle={this.toggleInlineStyle}
+                  />
+                <div className="RichEditor-editor">
+                  <Editor
+                    editorState={editorState}
+                    handleKeyCommand={this.handleKeyCommand}
+                    onChange={this.onChange}
+                    onTab={this.onTab} />
+                </div>
+              </div>
+            </div>
+
+            <div className="markdown-results">
+              <h1>Markdown Editor</h1>
+              <textarea
+                onChange={this.onTextareaChange}
+                value={this.state.markdown}
+              />
+            </div>
           </div>
         </div>
       );
