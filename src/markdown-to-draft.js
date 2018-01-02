@@ -252,7 +252,7 @@ function handlSpanStyles(attribs) {
 function markdownToDraft(string, options = {}) {
     idCounter = -1;
     const defaultOptions = {html: true}
-    const md = new Remarkable({...defaultOptions, ...options.remarkableOptions});
+    const md = new Remarkable(Object.assign({}, defaultOptions, options.remarkableOptions || {}));
     const htmlPlugins = {blockPlugins: options.htmlBlockPlugins || {}, inlineStylePlugins: {'span': handlSpanStyles}};
     // If users want to define custom remarkable plugins for custom markdown, they can be added here
     if (options.remarkablePlugins) {
