@@ -197,7 +197,7 @@ const EntityItems = {
       return `](${entity.data.url})`;
     }
   },
-  'image': {
+  'IMAGE': {
     open: function (entity) {
       return '![';
     },
