@@ -85,7 +85,7 @@ const DefaultBlockEntities = {
         if (item.alt && item.alt.length > 1)
             data.alt = item.alt;
         return {
-            type: 'image',
+            type: 'IMAGE',
             mutability: 'IMMUTABLE',
             data: data
         };
