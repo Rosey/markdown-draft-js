@@ -302,4 +302,34 @@ describe('markdownToDraft', function () {
       ]
     });
   });
+
+  it('can handle emoji', function () {
+    // Note `'👍'.length === 2`
+    var markdown = 'Testing 👍 _italic_ words words words **bold** words words words';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult).toEqual({
+      'entityMap': {},
+      'blocks': [
+        {
+          'depth': 0,
+          'type': 'unstyled',
+          'text': 'Testing 👍 italic words words words bold words words words',
+          'entityRanges': [],
+          'inlineStyleRanges': [
+            {
+              'offset': 10,
+              'length': 6,
+              'style': 'ITALIC'
+            },
+            {
+              'offset': 35,
+              'length': 4,
+              'style': 'BOLD'
+            }
+          ]
+        }
+      ]
+    });
+  });
 });

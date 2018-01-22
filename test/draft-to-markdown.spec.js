@@ -188,4 +188,34 @@ describe('draftToMarkdown', function () {
 
     expect(markdown).toEqual('1. item\n    1. item');
   });
+
+  it('renders emoji correctly', function () {
+    /* eslint-disable */
+    var rawObject =  {
+      'entityMap': {},
+      'blocks': [
+        {
+          'depth': 0,
+          'type': 'unstyled',
+          'text': 'Testing 👍 italic words words words bold words words words',
+          'entityRanges': [],
+          'inlineStyleRanges': [
+            {
+              'offset': 10,
+              'length': 6,
+              'style': 'ITALIC'
+            },
+            {
+              'offset': 35,
+              'length': 4,
+              'style': 'BOLD'
+            }
+          ]
+        }
+      ]
+    }
+    /* eslint-enable */
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('Testing 👍 _italic_ words words words **bold** words words words');
+  });
 });
