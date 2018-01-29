@@ -1,6 +1,15 @@
 const Remarkable = require('remarkable');
 const TRAILING_NEW_LINE = /\n$/;
 
+// In DraftJS, string lengths are calculated differently than in JS itself (due
+// to surrogate pairs). Instead of importing the entire UnicodeUtils file from
+// FBJS, we use a simpler alternative, in the form of `Array.from`.
+//
+// Alternative:  const { strlen } = require('fbjs/lib/UnicodeUtils');
+function strlen(str) {
+  return Array.from(str).length;
+}
+
 // Block level items, key is Remarkable's key for them, value returned is
 // A function that generates the raw draftjs key and block data.
 //
@@ -119,14 +128,14 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
     } else if (BlockStyles[child.type]) {
       var key = generateUniqueKey();
       var styleBlock = {
-        offset: content.length || 0,
+        offset: strlen(content) || 0,
         length: 0,
         style: BlockStyles[child.type]
       };
 
       // Edge case hack because code items don't have inline content or open/close, unlike everything else
       if (child.type === 'code') {
-        styleBlock.length = child.content.length;
+        styleBlock.length = strlen(child.content);
         content += child.content;
       }
 
@@ -137,18 +146,18 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
       blockEntities[key] = BlockEntities[child.type](child);
 
       blockEntityRanges.push({
-        offset: content.length || 0,
+        offset: strlen(content) || 0,
         length: 0,
         key: key
       });
     } else if (child.type.indexOf('_close') !== -1 && BlockEntities[child.type.replace('_close', '_open')]) {
-      blockEntityRanges[blockEntityRanges.length - 1].length = content.length - blockEntityRanges[blockEntityRanges.length - 1].offset;
+      blockEntityRanges[blockEntityRanges.length - 1].length = strlen(content) - blockEntityRanges[blockEntityRanges.length - 1].offset;
     } else if (child.type.indexOf('_close') !== -1 && BlockStyles[child.type.replace('_close', '_open')]) {
       var type = BlockStyles[child.type.replace('_close', '_open')]
       blockInlineStyleRanges = blockInlineStyleRanges
         .map(style => {
           if (style.length === 0 && style.style === type) {
-            style.length = content.length - style.offset;
+            style.length = strlen(content) - style.offset;
           }
           return style;
         });
