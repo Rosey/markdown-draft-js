@@ -162,6 +162,15 @@ const EntityItems = {
     close: function (entity) {
       return `](${entity.data.url})`;
     }
+  },
+  image: {
+    open: function (entity) {
+      return '';
+    },
+
+    close: function (entity) {
+      return `![](${entity.data.src})`;
+    }
   }
 }
 

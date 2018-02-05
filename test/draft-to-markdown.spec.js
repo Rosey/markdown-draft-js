@@ -52,6 +52,14 @@ describe('draftToMarkdown', function () {
     expect(markdown).toEqual('This is a test of [a link](https://google.com)\n\nAnd [perhaps](https://facebook.github.io/draft-js/) we should test once more.');
   });
 
+  it('renders images correctly', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{"0":{"type":"image","mutability":"IMMUTABLE","data":{"src":"https://placekitten.com/300/300"}},"1":{"type":"image","mutability":"IMMUTABLE","data":{"src":"https://placekitten.com/500/500"}}},"blocks":[{"key":"58spd","text":" ","type":"atomic","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":0,"length":1,"key":0}],"data":{}},{"key":"9ln6g","text":"This is an example image","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}, {"key":"58spd","text":" ","type":"atomic","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":0,"length":1,"key":1}],"data":{}}, {"key":"3euar","text":"And perhaps we should test once more.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual(' ![](https://placekitten.com/300/300)\n\nThis is an example image\n\n ![](https://placekitten.com/500/500)\n\nAnd perhaps we should test once more.');
+  });
+
   it('renders "the kitchen sink" correctly', function () {
     /* eslint-disable */
     var rawObject = {"entityMap":{},"blocks":[{"key":"2uvch","text":"Hello!","type":"header-one","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"gcip","text":"My name is Rose :) \nToday, I'm here to talk to you about how great markdown is!\n","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":11,"length":4,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"eu8ak","text":"First, here's a few bullet points:","type":"header-two","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"fiti6","text":"One","type":"unordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"d8amu","text":"Two","type":"unordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"7r62d","text":"Three","type":"unordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"3n7hc","text":"A codeblock","type":"code-block","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"9o0hn","text":"And then... some monospace text?\nOr... italics?","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":12,"length":19,"style":"CODE"},{"offset":39,"length":8,"style":"ITALIC"}],"entityRanges":[],"data":{}}]};

@@ -65,6 +65,28 @@ describe('markdownToDraft', function () {
     expect(conversionResult.entityMap[blockTwoKey].data.url).toEqual('https://facebook.github.io/draft-js/');
   });
 
+  it('renders images correctly', function () {
+    var markdown = ' ![](https://placekitten.com/300/300)\n\nThis is an example image\n\n ![](https://placekitten.com/500/500)\n\nAnd perhaps we should test once more.';
+    var conversionResult = markdownToDraft(markdown);
+    expect(conversionResult.blocks[0].text).toEqual(' ');
+    expect(conversionResult.blocks[0].type).toEqual('atomic');
+    expect(conversionResult.blocks[0].inlineStyleRanges).toEqual([]);
+    expect(conversionResult.blocks[0].entityRanges[0].offset).toEqual(0);
+    expect(conversionResult.blocks[0].entityRanges[0].length).toEqual(1);
+    var blockOneKey = conversionResult.blocks[0].entityRanges[0].key;
+    expect(conversionResult.entityMap[blockOneKey].type).toEqual('image');
+    expect(conversionResult.entityMap[blockOneKey].data.src).toEqual('https://placekitten.com/300/300');
+
+    expect(conversionResult.blocks[2].text).toEqual(' ');
+    expect(conversionResult.blocks[2].type).toEqual('atomic');
+    expect(conversionResult.blocks[2].inlineStyleRanges).toEqual([]);
+    expect(conversionResult.blocks[2].entityRanges[0].offset).toEqual(0);
+    expect(conversionResult.blocks[2].entityRanges[0].length).toEqual(1);
+    var blockTwoKey = conversionResult.blocks[2].entityRanges[0].key;
+    expect(conversionResult.entityMap[blockTwoKey].type).toEqual('image');
+    expect(conversionResult.entityMap[blockTwoKey].data.src).toEqual('https://placekitten.com/500/500');
+  });
+
   it('renders "the kitchen sink" correctly', function () {
     var markdown = '# Hello!\n\nMy name is **Rose** :) \nToday, I\'m here to talk to you about how great markdown is!\n\n## First, here\'s a few bullet points:\n\n- One\n- Two\n- Three\n\n```\nA codeblock\n```\n\nAnd then... `some monospace text`?\nOr... _italics?_';
     var conversionResult = markdownToDraft(markdown);
