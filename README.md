@@ -125,3 +125,9 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
 `preserveNewlines` can be passed in to preserve empty whitespace newlines. By default, markdown rules specify that blank whitespace is collapsed, but in the interest in maintaining 1:1 parity with draft appearance-wise, this option can be turned on if you like :)  
 
 NOTE: If you plan on passing the markdown to a 3rd party markdown parser, markdown default behaviour IS to strip additional newlines, so the HTML it generates will likely strip those newlines at that point.... Which is why this is an option disabled by default.
+
+### FAQ
+
+#### How do I get images to work?
+
+For now, check out [this pull request](https://github.com/Rosey/markdown-draft-js/pull/49) and the discussion below. [this comment](https://github.com/Rosey/markdown-draft-js/pull/49#issuecomment-369682808) outlines how to get images working by writing a basic plugin for markdown-draft-js. The reason it’s not built into the library itself is because draftjs doesn’t support images out of the box, so there’s no standardized way of supporting them in the library that will work for everyone. In the future I hope to publish a plugin for people to quickly add image support if they need to, but I haven’t quite gotten there yet 🙂
