@@ -79,6 +79,13 @@ describe('idempotency', function () {
     expect(markdownConversion).toEqual(markdown);
   });
 
+  it ('renders codeblock with syntax correctly', function () {
+    var markdown = '```javascript\nsingle line codeblock\n```';
+    var rawDraftConversion = markdownToDraft(markdown);
+    var markdownConversion = draftToMarkdown(rawDraftConversion);
+    expect(markdownConversion).toEqual(markdown);
+  });
+
   it('renders "the kitchen sink" correctly', function () {
     var markdown = '# Hello!\n\nMy name is **Rose** :)\nToday, I\'m here to talk to you about how great markdown is!\n\n## First, here\'s a few bullet points:\n\n- One\n- Two\n- Three\n\n```\nA codeblock\n```\n\nAnd then... `some monospace text`?\nOr... _italics?_';
     var rawDraftConversion = markdownToDraft(markdown);
