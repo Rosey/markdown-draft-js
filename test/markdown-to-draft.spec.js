@@ -18,6 +18,15 @@ describe('markdownToDraft', function () {
       expect(conversionResult.blocks[0].type).toEqual('code-block');
     });
 
+    it ('renders codeblock with syntax correctly', function () {
+      var markdown = '```javascript\nsingle line codeblock\n```';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].text).toEqual('single line codeblock');
+      expect(conversionResult.blocks[0].type).toEqual('code-block');
+      expect(conversionResult.blocks[0].data.language).toEqual('javascript');
+    });
+
     it ('renders single-line codeblock with a single trailing newline correctly', function () {
       var markdown = '```\nsingle line codeblock with trailing newline\n\n```';
       var conversionResult = markdownToDraft(markdown);

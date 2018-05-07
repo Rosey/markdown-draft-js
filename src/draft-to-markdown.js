@@ -96,8 +96,8 @@ const StyleItems = {
   },
 
   'code-block': {
-    open: function () {
-      return '```\n';
+    open: function (block) {
+      return '```' + (block.data.language || '') + '\n';
     },
 
     close: function () {
