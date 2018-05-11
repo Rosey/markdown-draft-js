@@ -93,4 +93,20 @@ describe('idempotency', function () {
 
     expect(markdownConversion).toEqual(markdown);
   });
+
+  it ('renders escaped italics correctly', function () {
+    var markdown = 'test \\_not italic\\_ test';
+    var rawDraftConversion = markdownToDraft(markdown);
+    var markdownConversion = draftToMarkdown(rawDraftConversion);
+
+    expect(markdownConversion).toEqual(markdown);
+  });
+
+  it ('renders escaped bold correctly', function () {
+    var markdown = 'test \\*\\*not italic\\*\\* test';
+    var rawDraftConversion = markdownToDraft(markdown);
+    var markdownConversion = draftToMarkdown(rawDraftConversion);
+
+    expect(markdownConversion).toEqual(markdown);
+  });
 });
