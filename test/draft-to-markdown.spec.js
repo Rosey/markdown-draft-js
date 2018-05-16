@@ -227,4 +227,13 @@ describe('draftToMarkdown', function () {
     var markdown = draftToMarkdown(rawObject);
     expect(markdown).toEqual('Testing 👍 _italic_ words words words **bold** words words words');
   });
+
+  it ('escapes markdown characters', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"Test _not italic_ Test **not bold**","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('Test \\_not italic\\_ Test \\*\\*not bold\\*\\*');
+  });
 });

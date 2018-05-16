@@ -1,5 +1,12 @@
 const TRAILING_WHITESPACE = /[ |\u0020|\t]*$/;
 
+// This escapes some markdown but there's a few cases that are TODO -
+// - List items
+// - Back tics  (see https://github.com/Rosey/markdown-draft-js/issues/52#issuecomment-388458017)
+// - Complex markdown, like links or images. Not sure it's even worth it, because if you're typing
+// that into draft chances are you know its markdown and maybe expect it convert? :/
+const MARKDOWN_STYLE_CHARACTERS = /(\*|_|~|>|#|\\)/;
+
 // A map of draftjs block types -> markdown open and close characters
 // Both the open and close methods must exist, even if they simply return an empty string.
 // They should always return a string.
@@ -303,6 +310,7 @@ function renderBlock(block, index, rawDraftObject, options) {
       markdownToAdd = [];
     }
 
+    character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
     markdownString += character;
   });
 
