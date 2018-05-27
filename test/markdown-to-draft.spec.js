@@ -9,6 +9,152 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].type).toEqual('unstyled');
   });
 
+  describe('blockquotes', function () {
+    it('renders blockquotes correctly', function () {
+      var markdown = '> Test I am a blockquote';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('blockquote');
+      expect(conversionResult.blocks[0].text).toEqual('Test I am a blockquote');
+    });
+
+    it('can handle an empty blockquote', function () {
+      var markdown = '>';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('blockquote');
+      expect(conversionResult.blocks[0].text).toEqual('');
+    });
+
+    it('can handle a blockquote with non-blockquote text around it', function () {
+      var markdown = 'Hey I am not blockquote \n\n I am also not a blockquote \n\n > Test I am a blockquote\n\n more not blockquote';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[2].type).toEqual('blockquote');
+      expect(conversionResult.blocks[2].text).toEqual('Test I am a blockquote');
+    });
+  });
+
+  describe('headings', function () {
+    it ('renders h1 correctly', function () {
+      var markdown = '# Test I am a heading';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('header-one');
+      expect(conversionResult.blocks[0].text).toEqual('Test I am a heading');
+    });
+
+    it ('renders h2 correctly', function () {
+      var markdown = '## Test I am a heading';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('header-two');
+      expect(conversionResult.blocks[0].text).toEqual('Test I am a heading');
+    });
+
+    it ('renders h3 correctly', function () {
+      var markdown = '### Test I am a heading';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('header-three');
+      expect(conversionResult.blocks[0].text).toEqual('Test I am a heading');
+    });
+
+    it ('renders h4 correctly', function () {
+      var markdown = '#### Test I am a heading';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('header-four');
+      expect(conversionResult.blocks[0].text).toEqual('Test I am a heading');
+    });
+
+    it ('renders h5 correctly', function () {
+      var markdown = '##### Test I am a heading';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('header-five');
+      expect(conversionResult.blocks[0].text).toEqual('Test I am a heading');
+    });
+
+    it ('renders h6 correctly', function () {
+      var markdown = '###### Test I am a heading';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('header-six');
+      expect(conversionResult.blocks[0].text).toEqual('Test I am a heading');
+    });
+
+    it('can handle an empty heading', function () {
+      var markdown = '#';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('header-one');
+      expect(conversionResult.blocks[0].text).toEqual('');
+    });
+
+    it('can handle heading with non-heading text around it', function () {
+      var markdown = 'Test I am not a heading \n\n # I am a heading \n\n I am more no heading';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[1].type).toEqual('header-one');
+      expect(conversionResult.blocks[1].text).toEqual('I am a heading');
+    });
+  });
+
+  describe('lists', function () {
+    it('can handle an unordered list item', function () {
+      var markdown = '- Hi I am an unordered List Item';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('unordered-list-item');
+      expect(conversionResult.blocks[0].text).toEqual('Hi I am an unordered List Item');
+    });
+
+    it('can handle an ordered list item', function () {
+      var markdown = '1. Hi I am a list item';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[0].text).toEqual('Hi I am a list item');
+    });
+
+    it('can handle an empty unordered list item', function () {
+      var markdown = '-';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('unordered-list-item');
+      expect(conversionResult.blocks[0].text).toEqual('');
+    });
+
+    it('can handle an ordered empty list item', function () {
+      var markdown = '1.';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[0].text).toEqual('');
+    });
+
+    it('can handle nested unordered lists', function () {
+      var markdown = '- item\n    - item';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('unordered-list-item');
+      expect(conversionResult.blocks[0].depth).toEqual(0);
+      expect(conversionResult.blocks[1].type).toEqual('unordered-list-item');
+      expect(conversionResult.blocks[1].depth).toEqual(1);
+    });
+
+    it('can handle nested ordered lists', function () {
+      var markdown = '1. item\n    1. item';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[0].depth).toEqual(0);
+      expect(conversionResult.blocks[1].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[1].depth).toEqual(1);
+    });
+  });
+
   describe ('codeblocks', function () {
     it ('renders single-line codeblock correctly', function () {
       var markdown = '```\nsingle line codeblock\n```';
@@ -215,58 +361,6 @@ describe('markdownToDraft', function () {
 
     expect(conversionResult.blocks[0].type).toEqual('code-block');
     expect(conversionResult.blocks[0].data.lang).toEqual('js');
-  });
-
-  it('can handle an empty heading', function () {
-    var markdown = '#';
-    var conversionResult = markdownToDraft(markdown);
-
-    expect(conversionResult.blocks[0].type).toEqual('header-one');
-    expect(conversionResult.blocks[0].text).toEqual('');
-  });
-
-  it('can handle an empty blockquote', function () {
-    var markdown = '>';
-    var conversionResult = markdownToDraft(markdown);
-
-    expect(conversionResult.blocks[0].type).toEqual('blockquote');
-    expect(conversionResult.blocks[0].text).toEqual('');
-  });
-
-  it('can handle an empty unordered list item', function () {
-    var markdown = '-';
-    var conversionResult = markdownToDraft(markdown);
-
-    expect(conversionResult.blocks[0].type).toEqual('unordered-list-item');
-    expect(conversionResult.blocks[0].text).toEqual('');
-  });
-
-  it('can handle an ordered empty list item', function () {
-    var markdown = '1.';
-    var conversionResult = markdownToDraft(markdown);
-
-    expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
-    expect(conversionResult.blocks[0].text).toEqual('');
-  });
-
-  it('can handle nested unordered lists', function () {
-    var markdown = '- item\n    - item';
-    var conversionResult = markdownToDraft(markdown);
-
-    expect(conversionResult.blocks[0].type).toEqual('unordered-list-item');
-    expect(conversionResult.blocks[0].depth).toEqual(0);
-    expect(conversionResult.blocks[1].type).toEqual('unordered-list-item');
-    expect(conversionResult.blocks[1].depth).toEqual(1);
-  });
-
-  it('can handle nested ordered lists', function () {
-    var markdown = '1. item\n    1. item';
-    var conversionResult = markdownToDraft(markdown);
-
-    expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
-    expect(conversionResult.blocks[0].depth).toEqual(0);
-    expect(conversionResult.blocks[1].type).toEqual('ordered-list-item');
-    expect(conversionResult.blocks[1].depth).toEqual(1);
   });
 
   it('can handle simple nested styles', function () {
