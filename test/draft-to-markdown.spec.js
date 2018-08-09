@@ -247,6 +247,9 @@ describe('draftToMarkdown', function () {
 
     var markdown = draftToMarkdown(rawObject);
     expect(markdown).toEqual('### Header 1\n\n### Header 2');
+
+    markdown = draftToMarkdown(rawObject, {preserveNewlines: true});
+    expect(markdown).toEqual('### \n### Header 1\n### \n### Header 2');
   });
 
 });
