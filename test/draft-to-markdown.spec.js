@@ -236,4 +236,17 @@ describe('draftToMarkdown', function () {
     var markdown = draftToMarkdown(rawObject);
     expect(markdown).toEqual('Test \\_not italic\\_ Test \\*\\*not bold\\*\\*');
   });
+
+  it('handles blank lines with styled block types', function () {
+    // draft-js can have blank lines that have block styles.
+    // This would result in double-application of markdown line prefixes.
+
+    /* eslint-disable */
+    const rawObject = { "blocks": [ { "key": "e8ojh", "text": "", "type": "header-three", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }, { "key": "eg79g", "text": "Header 1", "type": "header-three", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }, { "key": "123", "text": "", "type": "header-three", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }, { "key": "456", "text": "Header 2", "type": "header-three", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} } ], "entityMap": {} };
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('### Header 1\n\n### Header 2');
+  });
+
 });
