@@ -179,6 +179,10 @@ const SingleNewlineAfterBlock = [
   'ordered-list-item'
 ];
 
+function isEmptyBlock(block) {
+  return block.text.length === 0 && block.entityRanges.length === 0 && Object.keys(block.data || {}).length === 0;
+}
+
 /**
  * Generate markdown for a single block javascript object
  * DraftJS raw object contains an array of blocks, which is the main "structure"
@@ -200,9 +204,14 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   var type = block.type;
 
+  // draft-js emits empty blocks that have type set... don't style them
+  if (isEmptyBlock(block)) {
+    type = 'unstyled';
+  }
+
   // Render main block wrapping element
   if (customStyleItems[type] || StyleItems[type]) {
-    if (block.type === 'unordered-list-item' || block.type === 'ordered-list-item') {
+    if (type === 'unordered-list-item' || type === 'ordered-list-item') {
       markdownString += ' '.repeat(block.depth * 4);
     }
 
