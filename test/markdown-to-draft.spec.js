@@ -33,6 +33,17 @@ describe('markdownToDraft', function () {
       expect(conversionResult.blocks[2].type).toEqual('blockquote');
       expect(conversionResult.blocks[2].text).toEqual('Test I am a blockquote');
     });
+
+    it ('can handle empty blockquote between blockquote with content', function () {
+      var markdown = '> Testing\n> \n> \n> Hello';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('blockquote');
+      expect(conversionResult.blocks[0].text).toEqual('Testing');
+
+      expect(conversionResult.blocks[1].type).toEqual('blockquote');
+      expect(conversionResult.blocks[1].text).toEqual('Hello');
+    });
   });
 
   describe('headings', function () {

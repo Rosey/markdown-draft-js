@@ -224,38 +224,46 @@ function markdownToDraft(string, options = {}) {
       // The entity map is a master object separate from the block so just add any entities created for this block to the master object
       Object.assign(entityMap, blockEntities);
     } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence') && BlockTypes[itemType]) {
+      var depth = 0;
+      var block;
+
+      if (item.level > 0) {
+        depth = Math.floor(item.level / 2);
+      }
+
       // Draftjs only supports 1 level of blocks, hence the item.level === 0 check
       // List items will always be at least `level==1` though so we need a separate check for that
+      // If there’s nested block level items deeper than that, we need to make sure we capture this by cloning the topmost block
+      // otherwise we’ll accidentally overwrite its text. (eg if there's a blockquote with 3 nested paragraphs with inline text, without this check, only the last paragraph would be reflected)
       if (item.level === 0 || item.type === 'list_item_open') {
-        var depth = 0;
-
-        if (item.level > 0) {
-          depth = Math.floor(item.level / 2);
-        }
-
-        var block = Object.assign({
+        block = Object.assign({
           depth: depth
         }, BlockTypes[itemType](item));
+      } else if (item.level > 0 && blocks[blocks.length - 1].text) {
+        block = Object.assign({}, blocks[blocks.length - 1]);
+      }
 
-        if (options.preserveNewlines) {
-          // Re: previousBlockEndingLine.... omg.
-          // So remarkable strips out empty newlines and doesn't make any entities to parse to restore them
-          // the only solution I could find is that there's a 2-value array on each block item called "lines" which is the start end line of the block element.
-          // by keeping track of the PREVIOUS block element ending line and the NEXT block element starting line, we can find the difference between the new lines and insert
-          // an appropriate number of extra paragraphs to re-create those newlines in draftjs.
-          // This is probably my least favourite thing in this file, but not sure what could be better.
-          if (previousBlockEndingLine) {
-            var totalEmptyParagraphsToCreate = item.lines[0] - previousBlockEndingLine;
-            for (var i = 0; i < totalEmptyParagraphsToCreate; i++) {
-              blocks.push(DefaultBlockTypes.paragraph_open());
-            }
+      if (block && options.preserveNewlines) {
+        // Re: previousBlockEndingLine.... omg.
+        // So remarkable strips out empty newlines and doesn't make any entities to parse to restore them
+        // the only solution I could find is that there's a 2-value array on each block item called "lines" which is the start end line of the block element.
+        // by keeping track of the PREVIOUS block element ending line and the NEXT block element starting line, we can find the difference between the new lines and insert
+        // an appropriate number of extra paragraphs to re-create those newlines in draftjs.
+        // This is probably my least favourite thing in this file, but not sure what could be better.
+        if (previousBlockEndingLine) {
+          var totalEmptyParagraphsToCreate = item.lines[0] - previousBlockEndingLine;
+          for (var i = 0; i < totalEmptyParagraphsToCreate; i++) {
+            blocks.push(DefaultBlockTypes.paragraph_open());
           }
         }
+      }
 
+      if (block) {
         previousBlockEndingLine = item.lines[1] + 1;
         blocks.push(block);
       }
     }
+
   });
 
   // EditorState.createWithContent will error if there's no blocks defined
