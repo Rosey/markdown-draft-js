@@ -179,6 +179,10 @@ const SingleNewlineAfterBlock = [
   'ordered-list-item'
 ];
 
+function isEmptyBlock(block) {
+  return block.text.length === 0 && block.entityRanges.length === 0 && Object.keys(block.data || {}).length === 0;
+}
+
 /**
  * Generate markdown for a single block javascript object
  * DraftJS raw object contains an array of blocks, which is the main "structure"
@@ -200,9 +204,16 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   var type = block.type;
 
+  // draft-js emits empty blocks that have type set… don’t style them unless the user wants to preserve new lines
+  // (if newlines are preserved each empty line should be "styled" eg in case of blockquote we want to see a blockquote.)
+  // but if newlines aren’t preserved then we'd end up having double or triple or etc markdown characters, which is a bug.
+  if (isEmptyBlock(block) && !options.preserveNewlines) {
+    type = 'unstyled';
+  }
+
   // Render main block wrapping element
   if (customStyleItems[type] || StyleItems[type]) {
-    if (block.type === 'unordered-list-item' || block.type === 'ordered-list-item') {
+    if (type === 'unordered-list-item' || type === 'ordered-list-item') {
       markdownString += ' '.repeat(block.depth * 4);
     }
 
@@ -342,7 +353,13 @@ function renderBlock(block, index, rawDraftObject, options) {
     markdownString += '\n';
   } else if (rawDraftObject.blocks[index + 1]) {
     if (rawDraftObject.blocks[index].text) {
-      markdownString += '\n\n';
+      if (type === 'unstyled' && options.preserveNewlines) {
+        markdownString += '\n\n';
+      } else if (!options.preserveNewlines) {
+        markdownString += '\n\n';
+      } else {
+        markdownString += '\n';
+      }
     } else if (options.preserveNewlines) {
       markdownString += '\n';
     }
