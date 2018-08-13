@@ -237,6 +237,15 @@ describe('draftToMarkdown', function () {
     expect(markdown).toEqual('Test \\_not italic\\_ Test \\*\\*not bold\\*\\*');
   });
 
+  it ('escapes block markdown characters when at start of line', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"# Test _not # italic_ Test **not bold**","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('\\# Test \\_not # italic\\_ Test \\*\\*not bold\\*\\*');
+  });
+
   it('handles blank lines with styled block types', function () {
     // draft-js can have blank lines that have block styles.
     // This would result in double-application of markdown line prefixes.

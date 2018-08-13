@@ -5,7 +5,9 @@ const TRAILING_WHITESPACE = /[ \u0020\t]*$/;
 // - Back tics  (see https://github.com/Rosey/markdown-draft-js/issues/52#issuecomment-388458017)
 // - Complex markdown, like links or images. Not sure it's even worth it, because if you're typing
 // that into draft chances are you know its markdown and maybe expect it convert? :/
-const MARKDOWN_STYLE_CHARACTERS = /(\*|_|~|>|#|\\)/;
+const MARKDOWN_STYLE_CHARACTERS = /(\*|_|~|\\)/;
+
+const MARKDOWN_BLOCK_STYLE_CHARACTERS = /(>|#)/;
 
 // A map of draftjs block types -> markdown open and close characters
 // Both the open and close methods must exist, even if they simply return an empty string.
@@ -322,6 +324,11 @@ function renderBlock(block, index, rawDraftObject, options) {
     }
 
     character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
+
+    if (characterIndex === 0) {
+      character = character.replace(MARKDOWN_BLOCK_STYLE_CHARACTERS, '\\$1');
+    }
+
     markdownString += character;
   });
 
