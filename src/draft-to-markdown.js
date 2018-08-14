@@ -7,8 +7,6 @@ const TRAILING_WHITESPACE = /[ \u0020\t]*$/;
 // that into draft chances are you know its markdown and maybe expect it convert? :/
 const MARKDOWN_STYLE_CHARACTERS = /(\*|_|~|\\)/;
 
-const MARKDOWN_BLOCK_STYLE_CHARACTERS = /(>|#)/;
-
 // A map of draftjs block types -> markdown open and close characters
 // Both the open and close methods must exist, even if they simply return an empty string.
 // They should always return a string.
@@ -323,10 +321,14 @@ function renderBlock(block, index, rawDraftObject, options) {
       markdownToAdd = [];
     }
 
+    // Escaping inline markdown characters
     character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
 
-    if (characterIndex === 0) {
-      character = character.replace(MARKDOWN_BLOCK_STYLE_CHARACTERS, '\\$1');
+    // Special escape logic for blockquotes and heading characters
+    if (characterIndex === 0 && character === '#' && block.text[1] && block.text[1] === ' ') {
+      character = character.replace('#', '\\#');
+    } else if (characterIndex === 0 && character === '>') {
+      character = character.replace('>', '\\>');
     }
 
     markdownString += character;
