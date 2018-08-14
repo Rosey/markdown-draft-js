@@ -246,6 +246,24 @@ describe('draftToMarkdown', function () {
     expect(markdown).toEqual('\\# Test \\_not # italic\\_ Test \\*\\*not bold\\*\\*');
   });
 
+  it ('doesn’t escape heading markdown characters when no whitespace afterwards', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"#Test","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('#Test');
+  });
+
+  it ('does escape blockquote markdown characters when no whitespace afterwards', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":">Test","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('\\>Test');
+  });
+
   it('handles blank lines with styled block types', function () {
     // draft-js can have blank lines that have block styles.
     // This would result in double-application of markdown line prefixes.
