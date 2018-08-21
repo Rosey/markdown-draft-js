@@ -264,6 +264,24 @@ describe('draftToMarkdown', function () {
     expect(markdown).toEqual('\\>Test');
   });
 
+  it ('doesn’t escape markdown characters in inline code blocks', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"such special code which contains *special* chars is so important","type":"unstyled","depth":0,"inlineStyleRanges":[{'offset':5,'length':43,'style':'CODE'}],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('such `special code which contains *special* chars` is so important');
+  });
+
+  it ('doesn’t escape markdown characters in code blocks', function () {
+    /* eslint-disable */
+    var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"such special _code_ which contains *special* chars *wow*","type":"code-block","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+    /* eslint-enable */
+
+    var markdown = draftToMarkdown(rawObject);
+    expect(markdown).toEqual('```\nsuch special _code_ which contains *special* chars *wow*\n```');
+  });
+
   it('handles blank lines with styled block types', function () {
     // draft-js can have blank lines that have block styles.
     // This would result in double-application of markdown line prefixes.
