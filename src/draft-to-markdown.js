@@ -321,14 +321,16 @@ function renderBlock(block, index, rawDraftObject, options) {
       markdownToAdd = [];
     }
 
-    // Escaping inline markdown characters
-    character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
+    if (block.type !== 'code-block' && !openInlineStyles.find((style) => style.style === 'CODE')) {
+      // Escaping inline markdown characters
+      character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
 
-    // Special escape logic for blockquotes and heading characters
-    if (characterIndex === 0 && character === '#' && block.text[1] && block.text[1] === ' ') {
-      character = character.replace('#', '\\#');
-    } else if (characterIndex === 0 && character === '>') {
-      character = character.replace('>', '\\>');
+      // Special escape logic for blockquotes and heading characters
+      if (characterIndex === 0 && character === '#' && block.text[1] && block.text[1] === ' ') {
+        character = character.replace('#', '\\#');
+      } else if (characterIndex === 0 && character === '>') {
+        character = character.replace('>', '\\>');
+      }
     }
 
     markdownString += character;
