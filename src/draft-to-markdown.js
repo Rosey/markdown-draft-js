@@ -5,7 +5,7 @@ const TRAILING_WHITESPACE = /[ \u0020\t]*$/;
 // - Back tics  (see https://github.com/Rosey/markdown-draft-js/issues/52#issuecomment-388458017)
 // - Complex markdown, like links or images. Not sure it's even worth it, because if you're typing
 // that into draft chances are you know its markdown and maybe expect it convert? :/
-const MARKDOWN_STYLE_CHARACTERS = /(\*|_|~|\\)/;
+const MARKDOWN_STYLE_CHARACTERS = /(\*|_|~|\\|`)/;
 
 // A map of draftjs block types -> markdown open and close characters
 // Both the open and close methods must exist, even if they simply return an empty string.
@@ -321,15 +321,27 @@ function renderBlock(block, index, rawDraftObject, options) {
       markdownToAdd = [];
     }
 
-    if (block.type !== 'code-block' && !openInlineStyles.find((style) => style.style === 'CODE')) {
-      // Escaping inline markdown characters
-      character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
+    if (block.type !== 'code-block') {
+      let insideInlineCodeStyle = openInlineStyles.find((style) => style.style === 'CODE');
 
-      // Special escape logic for blockquotes and heading characters
-      if (characterIndex === 0 && character === '#' && block.text[1] && block.text[1] === ' ') {
-        character = character.replace('#', '\\#');
-      } else if (characterIndex === 0 && character === '>') {
-        character = character.replace('>', '\\>');
+      if (insideInlineCodeStyle) {
+        // Todo - The syntax to escape backtics when inside backtic code already is to use MORE backtics wrapping.
+        // So we need to see how many backtics in a row we have and then when converting to markdown, use that # + 1
+
+        // EG  ``Test ` Hllo ``
+        // OR   ```Test `` Hello```
+        // OR ````Test ``` Hello ````
+        // Similar work has to be done for codeblocks.
+      } else {
+        // Escaping inline markdown characters
+        character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
+
+        // Special escape logic for blockquotes and heading characters
+        if (characterIndex === 0 && character === '#' && block.text[1] && block.text[1] === ' ') {
+          character = character.replace('#', '\\#');
+        } else if (characterIndex === 0 && character === '>') {
+          character = character.replace('>', '\\>');
+        }
       }
     }
 
