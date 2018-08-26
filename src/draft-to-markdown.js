@@ -7,6 +7,20 @@ const TRAILING_WHITESPACE = /[ \u0020\t]*$/;
 // that into draft chances are you know its markdown and maybe expect it convert? :/
 const MARKDOWN_STYLE_CHARACTERS = /(\*|_|~|\\|`)/;
 
+// I hate this a bit, being outside of the function’s scope
+// but can’t think of a better way to keep track of how many ordered list
+// items were are on, as draft doesn’t explicitly tell us in the raw object 😢.
+// This is a hash that will be assigned values based on depth, so like
+// orderedListNumber[0] = 1 would mean that ordered list at depth 0 is on number 1.
+// orderedListNumber[0] = 2 would mean that ordered list at depth 0 is on number 2.
+// This is so we have the right number of numbers when doing a list, eg
+// 1. Item One
+// 2. Item two
+// 3. Item three
+// And so on.
+var orderedListNumber = {},
+    previousOrderedListDepth = 0;
+
 // A map of draftjs block types -> markdown open and close characters
 // Both the open and close methods must exist, even if they simply return an empty string.
 // They should always return a string.
@@ -23,8 +37,8 @@ const StyleItems = {
   },
 
   'ordered-list-item': {
-    open: function () {
-      return '1. ';
+    open: function (block, number = 1) {
+      return `${number}. `;
     },
 
     close: function () {
@@ -217,7 +231,23 @@ function renderBlock(block, index, rawDraftObject, options) {
       markdownString += ' '.repeat(block.depth * 4);
     }
 
-    markdownString += (customStyleItems[type] || StyleItems[type]).open(block);
+    if (type === 'ordered-list-item') {
+      orderedListNumber[block.depth] = orderedListNumber[block.depth] || 1;
+      markdownString += (customStyleItems[type] || StyleItems[type]).open(block, orderedListNumber[block.depth]);
+      orderedListNumber[block.depth]++;
+
+      // Have to reset the number for orderedListNumber if we are breaking out of a list so that if
+      // there's another nested list at the same level further down, it starts at 1 again.
+      // COMPLICATED 😭
+      if (previousOrderedListDepth > block.depth) {
+        orderedListNumber[previousOrderedListDepth] = 1;
+      }
+
+      previousOrderedListDepth = block.depth;
+    } else {
+      orderedListNumber = {};
+      markdownString += (customStyleItems[type] || StyleItems[type]).open(block);
+    }
   }
 
   // Render text within content, along with any inline styles/entities
@@ -408,6 +438,7 @@ function draftToMarkdown(rawDraftObject, options) {
     markdownString += renderBlock(block, index, rawDraftObject, options);
   });
 
+  orderedListNumber = {}; // See variable definitions at the top of the page to see why we have to do this sad hack.
   return markdownString;
 }
 

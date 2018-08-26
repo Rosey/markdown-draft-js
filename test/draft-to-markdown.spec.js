@@ -318,6 +318,24 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('1. item\n    1. item');
     });
 
+    it('renders complex nested ordered lists', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[{"key":"83lsh","text":"Test Item one unnested","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"f8nk7","text":"Test Item one nested","type":"ordered-list-item","depth":1,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"68mnn","text":"Test Item two nested","type":"ordered-list-item","depth":1,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"3lr37","text":"Test item three nested","type":"ordered-list-item","depth":1,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"6t7np","text":"Test item two unnested","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"c6spi","text":"Test item three unnested","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"dm827","text":"Test Item Four unnested","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"bni48","text":"Test item one nested under test item four","type":"ordered-list-item","depth":1,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"d3g6c","text":"Test item one double nested","type":"ordered-list-item","depth":2,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"cshu1","text":"Test item two double nested","type":"ordered-list-item","depth":2,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      /* eslint-enable */
+      var markdown = draftToMarkdown(rawObject);
+
+      expect(markdown).toEqual('1. Test Item one unnested\n    1. Test Item one nested\n    2. Test Item two nested\n    3. Test item three nested\n2. Test item two unnested\n3. Test item three unnested\n4. Test Item Four unnested\n    1. Test item one nested under test item four\n        1. Test item one double nested\n        2. Test item two double nested');
+    });
+
+    it('renders unnested ordered lists', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[{"key":"d9c1d","text":"item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"meoh","text":"item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      /* eslint-enable */
+      var markdown = draftToMarkdown(rawObject);
+
+      expect(markdown).toEqual('1. item\n2. item');
+    });
+
     it('renders emoji correctly', function () {
       /* eslint-disable */
       var rawObject =  {
