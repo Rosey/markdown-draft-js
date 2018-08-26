@@ -451,6 +451,31 @@ describe('markdownToDraft', function () {
     });
   });
 
+  it ('ignores tables', function () {
+    var markdown = 'this is the first line.\n' +
+          '\n' +
+          'this is the second line.\n' +
+          '\n' +
+          '| foo | bar |\n' +
+          '| --- | --- |\n' +
+          '| baz | bim |\n' +
+          '\n' +
+          'This is another line under the table.';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].text).toEqual('this is the first line.');
+    expect(conversionResult.blocks[0].type).toEqual('unstyled');
+
+    expect(conversionResult.blocks[1].text).toEqual('this is the second line.');
+    expect(conversionResult.blocks[1].type).toEqual('unstyled');
+
+    expect(conversionResult.blocks[2].text).toEqual('| foo | bar |\n| --- | --- |\n| baz | bim |');
+    expect(conversionResult.blocks[2].type).toEqual('unstyled');
+
+    expect(conversionResult.blocks[3].text).toEqual('This is another line under the table.');
+    expect(conversionResult.blocks[3].type).toEqual('unstyled');
+  });
+
   it('can handle emoji', function () {
     // Note `'👍'.length === 2`
     var markdown = 'Testing 👍 _italic_ words words words **bold** words words words';
