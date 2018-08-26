@@ -164,6 +164,40 @@ describe('markdownToDraft', function () {
       expect(conversionResult.blocks[1].type).toEqual('ordered-list-item');
       expect(conversionResult.blocks[1].depth).toEqual(1);
     });
+
+    it ('can handle complex nested ordered lists', function () {
+      var markdown = '1. Test Item one unnested\n    1. Test Item one nested\n    2. Test Item two nested\n    3. Test item three nested\n2. Test item two unnested\n3. Test item three unnested\n4. Test Item Four unnested\n    1. Test item one nested under test item four\n        1. Test item one double nested\n        2. Test item two double nested';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks[0].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[0].depth).toEqual(0);
+      expect(conversionResult.blocks[1].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[1].depth).toEqual(1);
+
+      expect(conversionResult.blocks[2].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[2].depth).toEqual(1);
+
+      expect(conversionResult.blocks[3].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[3].depth).toEqual(1);
+
+      expect(conversionResult.blocks[4].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[4].depth).toEqual(0);
+
+      expect(conversionResult.blocks[5].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[5].depth).toEqual(0);
+
+      expect(conversionResult.blocks[6].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[6].depth).toEqual(0);
+
+      expect(conversionResult.blocks[7].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[7].depth).toEqual(1);
+
+      expect(conversionResult.blocks[8].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[8].depth).toEqual(2);
+
+      expect(conversionResult.blocks[9].type).toEqual('ordered-list-item');
+      expect(conversionResult.blocks[9].depth).toEqual(2);
+    });
   });
 
   describe ('codeblocks', function () {
