@@ -254,6 +254,7 @@ describe('markdownToDraft', function () {
     var blockOneKey = conversionResult.blocks[0].entityRanges[0].key;
     expect(conversionResult.entityMap[blockOneKey].type).toEqual('LINK');
     expect(conversionResult.entityMap[blockOneKey].data.url).toEqual('https://google.com');
+    expect(conversionResult.entityMap[blockOneKey].data.href).toEqual('https://google.com');
 
     expect(conversionResult.blocks[1].text).toEqual('And perhaps we should test once more.');
     expect(conversionResult.blocks[1].type).toEqual('unstyled');
@@ -263,6 +264,8 @@ describe('markdownToDraft', function () {
     var blockTwoKey = conversionResult.blocks[1].entityRanges[0].key;
     expect(conversionResult.entityMap[blockTwoKey].type).toEqual('LINK');
     expect(conversionResult.entityMap[blockTwoKey].data.url).toEqual('https://facebook.github.io/draft-js/');
+    expect(conversionResult.entityMap[blockTwoKey].data.href).toEqual('https://facebook.github.io/draft-js/');
+
   });
 
   it('renders "the kitchen sink" correctly', function () {

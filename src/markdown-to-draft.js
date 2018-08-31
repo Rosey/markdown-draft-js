@@ -85,7 +85,8 @@ const DefaultBlockEntities = {
       type: 'LINK',
       mutability: 'MUTABLE',
       data: {
-        url: item.href
+        url: item.href,
+        href: item.href
       }
     };
   }

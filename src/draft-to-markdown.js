@@ -181,7 +181,7 @@ const EntityItems = {
     },
 
     close: function (entity) {
-      return `](${entity.data.url})`;
+      return `](${entity.data.url || entity.data.href})`;
     }
   }
 }
