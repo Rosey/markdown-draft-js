@@ -228,6 +228,9 @@ function markdownToDraft(string, options = {}) {
 
       // The entity map is a master object separate from the block so just add any entities created for this block to the master object
       Object.assign(entityMap, blockEntities);
+    } else if (item.type === 'code') {
+      // 4-space indented code block
+      blocks.push(DefaultBlockTypes.code(item));
     } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence') && BlockTypes[itemType]) {
       var depth = 0;
       var block;
