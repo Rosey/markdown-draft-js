@@ -241,6 +241,15 @@ describe('markdownToDraft', function () {
       expect(conversionResult.blocks[0].text).toEqual('Test \n\n here is more \n ok');
       expect(conversionResult.blocks[0].type).toEqual('code-block');
     });
+
+    it('can handle code that is indented 4 spaces', function () {
+      var markdown = '\n\n    - Code';
+      var conversionResult = markdownToDraft(markdown);
+
+      expect(conversionResult.blocks.length).toEqual(1);
+      expect(conversionResult.blocks[0].type).toEqual('code-block');
+      expect(conversionResult.blocks[0].text).toEqual('- Code');
+    });
   });
 
   it('renders links correctly', function () {
