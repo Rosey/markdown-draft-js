@@ -126,6 +126,8 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
 
 NOTE: If you plan on passing the markdown to a 3rd party markdown parser, markdown default behaviour IS to strip additional newlines, so the HTML it generates will likely strip those newlines at that point.... Which is why this is an option disabled by default.
 
+`preserveMarkdown` by default special markdown characters (i.e *~_\`) are escaped when converting from draft to markdown. Setting this option to true will prevent those special characters from being escaped, so the markdown string it gerenates will remain in its "raw" form.
+
 ### FAQ
 
 #### How do I get images to work?

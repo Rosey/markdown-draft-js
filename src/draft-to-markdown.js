@@ -351,7 +351,7 @@ function renderBlock(block, index, rawDraftObject, options) {
       markdownToAdd = [];
     }
 
-    if (block.type !== 'code-block') {
+    if (block.type !== 'code-block' && !options.preserveMarkdown) {
       let insideInlineCodeStyle = openInlineStyles.find((style) => style.style === 'CODE');
 
       if (insideInlineCodeStyle) {

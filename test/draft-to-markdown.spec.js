@@ -431,4 +431,42 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('```\nsuch special _code_ which contains *special* chars *wow*\n```');
     });
   });
+
+  describe('allowing markdown characters', function () {
+    it('preserves inline markdown characters', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"Test _not italic_ Test **not bold**","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject, { preserveMarkdown: true });
+      expect(markdown).toEqual('Test _not italic_ Test **not bold**');
+    });
+
+    it('preserves block markdown characters at begining of a line', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"# Test _not # italic_ Test **not bold**","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject, { preserveMarkdown: true });
+      expect(markdown).toEqual('# Test _not # italic_ Test **not bold**');
+    });
+
+    it('preserves blockquotes markdown characters with no trailing whitespace', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":">Test","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject, { preserveMarkdown: true });
+      expect(markdown).toEqual('>Test');
+    });
+
+    it('preserves italics markdown characters with no trailing whitespace', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"_Test_","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject, { preserveMarkdown: true });
+      expect(markdown).toEqual('_Test_');
+    });
+  });
 });
