@@ -438,7 +438,7 @@ describe('draftToMarkdown', function () {
       var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"Test _not italic_ Test **not bold**","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
       /* eslint-enable */
 
-      var markdown = draftToMarkdown(rawObject, { preserveMarkdown: true });
+      var markdown = draftToMarkdown(rawObject, { escapeMarkdownCharacters: false });
       expect(markdown).toEqual('Test _not italic_ Test **not bold**');
     });
 
@@ -447,7 +447,7 @@ describe('draftToMarkdown', function () {
       var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"# Test _not # italic_ Test **not bold**","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
       /* eslint-enable */
 
-      var markdown = draftToMarkdown(rawObject, { preserveMarkdown: true });
+      var markdown = draftToMarkdown(rawObject, { escapeMarkdownCharacters: false });
       expect(markdown).toEqual('# Test _not # italic_ Test **not bold**');
     });
 
@@ -456,7 +456,7 @@ describe('draftToMarkdown', function () {
       var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":">Test","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
       /* eslint-enable */
 
-      var markdown = draftToMarkdown(rawObject, { preserveMarkdown: true });
+      var markdown = draftToMarkdown(rawObject, { escapeMarkdownCharacters: false });
       expect(markdown).toEqual('>Test');
     });
 
@@ -465,7 +465,7 @@ describe('draftToMarkdown', function () {
       var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"_Test_","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
       /* eslint-enable */
 
-      var markdown = draftToMarkdown(rawObject, { preserveMarkdown: true });
+      var markdown = draftToMarkdown(rawObject, { escapeMarkdownCharacters: false });
       expect(markdown).toEqual('_Test_');
     });
   });
