@@ -214,7 +214,8 @@ function renderBlock(block, index, rawDraftObject, options) {
       markdownToAdd = [];
   var markdownString = '',
       customStyleItems = options.styleItems || {},
-      customEntityItems = options.entityItems || {};
+      customEntityItems = options.entityItems || {},
+      escapeMarkdownCharacters = options.hasOwnProperty('escapeMarkdownCharacters') ? options.escapeMarkdownCharacters : true;
 
   var type = block.type;
 
@@ -351,7 +352,7 @@ function renderBlock(block, index, rawDraftObject, options) {
       markdownToAdd = [];
     }
 
-    if (block.type !== 'code-block') {
+    if (block.type !== 'code-block' && escapeMarkdownCharacters) {
       let insideInlineCodeStyle = openInlineStyles.find((style) => style.style === 'CODE');
 
       if (insideInlineCodeStyle) {
