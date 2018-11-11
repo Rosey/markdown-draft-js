@@ -16,18 +16,6 @@
     "lint": "eslint ./src",
     "lint:tests": "eslint ./test"
   },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "es2015"
-          ]
-        }
-      ]
-    ]
-  },
   "devDependencies": {
     "babel-cli": "6.16.0",
     "babel-core": "6.17.0",
