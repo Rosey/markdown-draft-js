@@ -9,6 +9,13 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].type).toEqual('unstyled');
   });
 
+  it('renders text according to Remarkable options', function () {
+    var markdown = '(p)';
+    var conversionResult = markdownToDraft(markdown, {remarkableOptions: ['full', {typographer: true}]});
+    expect(conversionResult.blocks[0].text).toEqual('§');
+    expect(conversionResult.blocks[0].type).toEqual('unstyled');
+  });
+
   describe('blockquotes', function () {
     it('renders blockquotes correctly', function () {
       var markdown = '> Test I am a blockquote';
