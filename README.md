@@ -110,28 +110,14 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
 
 ### Remarkable options
 
-Since this module uses remarkable under the hood, you can also pass down options for the remarkable parser, simply add the property `remarkableOptions` to your options object. For example, let's say you wanted to parse html as well:
+Since this module uses Remarkable under the hood, you can also pass down preset and options for the Remarkable parser. Simply add the `remarkablePreset` or `remarkableOptions` property (or both of them) to your options object. For example, let's say you wanted to use the `commonmark` preset and parse html as well:
 
 ```javascript
 var rawDraftJSObject = markdownToDraft(markdownString, {
+  remarkablePreset: 'commonmark',
   remarkableOptions: {
     html: true
   }
-});
-```
-
-If you would like to use a preset and pass additional options to Remarkable at the same time, you can achieve that by setting `remarkableOptions` property to a two-element array:
-
-```javascript
-var rawDraftJSObject = markdownToDraft(markdownString, {
-  remarkableOptions: [
-    'full',
-    {
-      html: true,
-      linkify: true,
-      typographer: true
-    }
-  ]
 });
 ```
 

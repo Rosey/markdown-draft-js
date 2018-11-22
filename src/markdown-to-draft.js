@@ -180,13 +180,9 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
  * @return {Object} rawDraftObject
 **/
 function markdownToDraft(string, options = {}) {
-  let md;
-  if (Array.isArray(options.remarkableOptions) && options.remarkableOptions.length >= 2) {
-    const [preset, additionalOptions] = options.remarkableOptions;
-    md = new Remarkable(preset, additionalOptions);
-  } else {
-    md = new Remarkable(options.remarkableOptions);
-  }
+  const remarkablePreset = options.remarkablePreset || options.remarkableOptions;
+  const remarkableOptions = typeof options.remarkableOptions === 'object' ? options.remarkableOptions : null;
+  const md = new Remarkable(remarkablePreset, remarkableOptions);
 
   // TODO: markdownToDisable - I imagine we may want to allow users to customize this.
   // and also a way to enable specific special markdown, as that’s another thing remarkable allows.
