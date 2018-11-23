@@ -12,7 +12,7 @@ Please note: We recommend using a polyfill (like babel-polyfill) since we're usi
 
 `draftToMarkdown` expects a [RAW Draft.js JS object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html).
 
-It returns a string of markdown.  
+It returns a string of markdown.
 
 ```javascript
 // First, import `draftToMarkdown`
@@ -110,10 +110,11 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
 
 ### Remarkable options
 
-Since this module uses remarkable under the hood, you can also pass down options for the remarkable parser, simply add the property `remarkableOptions` to your options object. For example, let's say you wanted to parse html as well:
+Since this module uses Remarkable under the hood, you can also pass down preset and options for the Remarkable parser. Simply add the `remarkablePreset` or `remarkableOptions` property (or both of them) to your options object. For example, let's say you wanted to use the `commonmark` preset and parse html as well:
 
 ```javascript
 var rawDraftJSObject = markdownToDraft(markdownString, {
+  remarkablePreset: 'commonmark',
   remarkableOptions: {
     html: true
   }
@@ -122,7 +123,7 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
 
 ### More options
 
-`preserveNewlines` can be passed in to preserve empty whitespace newlines. By default, markdown rules specify that blank whitespace is collapsed, but in the interest in maintaining 1:1 parity with draft appearance-wise, this option can be turned on if you like :)  
+`preserveNewlines` can be passed in to preserve empty whitespace newlines. By default, markdown rules specify that blank whitespace is collapsed, but in the interest in maintaining 1:1 parity with draft appearance-wise, this option can be turned on if you like :)
 
 NOTE: If you plan on passing the markdown to a 3rd party markdown parser, markdown default behaviour IS to strip additional newlines, so the HTML it generates will likely strip those newlines at that point.... Which is why this is an option disabled by default.
 
