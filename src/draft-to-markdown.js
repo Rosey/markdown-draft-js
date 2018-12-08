@@ -407,7 +407,9 @@ function renderBlock(block, index, rawDraftObject, options) {
     markdownString += '\n';
   } else if (rawDraftObject.blocks[index + 1]) {
     if (rawDraftObject.blocks[index].text) {
-      if (type === 'unstyled' && options.preserveNewlines) {
+      if (type === 'unstyled' && options.preserveNewlines
+        || SingleNewlineAfterBlock.indexOf(type) !== -1
+          && SingleNewlineAfterBlock.indexOf(rawDraftObject.blocks[index + 1].type) === -1) {
         markdownString += '\n\n';
       } else if (!options.preserveNewlines) {
         markdownString += '\n\n';

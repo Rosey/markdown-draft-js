@@ -344,6 +344,24 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('1. item\n2. item');
     });
 
+    it('renders newlines after ordered lists correctly', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[{"key":"d9c1d","text":"item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"meoh","text":"item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"litt","text":"foo","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      /* eslint-enable */
+      var markdown = draftToMarkdown(rawObject);
+
+      expect(markdown).toEqual('1. item\n2. item\n\nfoo');
+    });
+
+    it('renders newlines after unordered lists correctly', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[{"key":"d9c1d","text":"item","type":"unordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"meoh","text":"item","type":"unordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"litt","text":"foo","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      /* eslint-enable */
+      var markdown = draftToMarkdown(rawObject);
+
+      expect(markdown).toEqual('- item\n- item\n\nfoo');
+    });
+
     it('renders emoji correctly', function () {
       /* eslint-disable */
       var rawObject =  {
