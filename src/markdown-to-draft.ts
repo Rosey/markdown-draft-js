@@ -181,7 +181,7 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
  * @return {Object} rawDraftObject
 **/
 
-export default function markdownToDraft(string: string, options?: DraftMarkdownOptions) {
+export function markdownToDraft(string: string, options?: DraftMarkdownOptions) {
   const remarkablePreset = options.remarkablePreset || 'commonmark';
   const remarkableOptions = typeof options.remarkableOptions === 'object' ? options.remarkableOptions : null;
   const md = new Remarkable(remarkablePreset, remarkableOptions);

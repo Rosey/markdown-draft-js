@@ -505,7 +505,7 @@ function renderBlock(
  *
  * @return {String} markdown string
  **/
-export default function draftToMarkdown(
+export function draftToMarkdown(
   rawDraftObject: DraftJS.RawDraftContentState,
   options: DraftMarkdownOptions
 ) {
