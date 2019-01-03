@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["types", "node_modules/@types"],
+    "lib": ["dom", "es2016"],
+    "module": "commonjs",
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "lib",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"]
+    }
+  },
+  "include": ["types/*", "src/**/*"],
+  "exclude": ["dist", "docs", "test"]
+}
