@@ -1,4 +1,5 @@
-const Remarkable = require('remarkable');
+import * as Remarkable from 'remarkable';
+import {  DraftMarkdownOptions } from './common';
 const TRAILING_NEW_LINE = /\n$/;
 
 // In DraftJS, string lengths are calculated differently than in JS itself (due
@@ -179,8 +180,9 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
  *
  * @return {Object} rawDraftObject
 **/
-function markdownToDraft(string, options = {}) {
-  const remarkablePreset = options.remarkablePreset || options.remarkableOptions;
+
+export default function markdownToDraft(string: string, options?: DraftMarkdownOptions) {
+  const remarkablePreset = options.remarkablePreset || 'commonmark';
   const remarkableOptions = typeof options.remarkableOptions === 'object' ? options.remarkableOptions : null;
   const md = new Remarkable(remarkablePreset, remarkableOptions);
 
@@ -286,5 +288,3 @@ function markdownToDraft(string, options = {}) {
     blocks
   };
 }
-
-module.exports = markdownToDraft;
