@@ -27,5 +27,8 @@
   },
   "dependencies": {
     "remarkable": "1.7.1"
+  },
+  "jest": {
+    "preset": "ts-jest"
   }
 }
