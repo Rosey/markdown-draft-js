@@ -1,5 +1,5 @@
-import * as DraftJS from "draft-js";
-import { DraftMarkdownOptions } from "./common";
+import * as DraftJS from 'draft-js';
+import { DraftMarkdownOptions } from './common';
 const TRAILING_WHITESPACE = /[ \u0020\t]*$/;
 
 // This escapes some markdown but there's a few cases that are TODO -
@@ -28,144 +28,144 @@ var orderedListNumber = {},
 // They should always return a string.
 const StyleItems = {
   // BLOCK LEVEL
-  "unordered-list-item": {
+  'unordered-list-item': {
     open: function() {
-      return "- ";
+      return '- ';
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
-  "ordered-list-item": {
+  'ordered-list-item': {
     open: function(block, number = 1) {
       return `${number}. `;
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
   blockquote: {
     open: function() {
-      return "> ";
+      return '> ';
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
-  "header-one": {
+  'header-one': {
     open: function() {
-      return "# ";
+      return '# ';
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
-  "header-two": {
+  'header-two': {
     open: function() {
-      return "## ";
+      return '## ';
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
-  "header-three": {
+  'header-three': {
     open: function() {
-      return "### ";
+      return '### ';
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
-  "header-four": {
+  'header-four': {
     open: function() {
-      return "#### ";
+      return '#### ';
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
-  "header-five": {
+  'header-five': {
     open: function() {
-      return "##### ";
+      return '##### ';
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
-  "header-six": {
+  'header-six': {
     open: function() {
-      return "###### ";
+      return '###### ';
     },
 
     close: function() {
-      return "";
+      return '';
     }
   },
 
-  "code-block": {
+  'code-block': {
     open: function(block) {
-      return "```" + (block.data.language || "") + "\n";
+      return '```' + (block.data.language || '') + '\n';
     },
 
     close: function() {
-      return "\n```";
+      return '\n```';
     }
   },
 
   // INLINE LEVEL
   BOLD: {
     open: function() {
-      return "**";
+      return '**';
     },
 
     close: function() {
-      return "**";
+      return '**';
     }
   },
 
   ITALIC: {
     open: function() {
-      return "_";
+      return '_';
     },
 
     close: function() {
-      return "_";
+      return '_';
     }
   },
 
   STRIKETHROUGH: {
     open: function() {
-      return "~~";
+      return '~~';
     },
 
     close: function() {
-      return "~~";
+      return '~~';
     }
   },
 
   CODE: {
     open: function() {
-      return "`";
+      return '`';
     },
 
     close: function() {
-      return "`";
+      return '`';
     }
   }
 };
@@ -179,7 +179,7 @@ const StyleItems = {
 const EntityItems = {
   LINK: {
     open: function(entity: DraftJS.RawDraftEntity) {
-      return "[";
+      return '[';
     },
 
     close: function(entity: DraftJS.RawDraftEntity) {
@@ -190,7 +190,7 @@ const EntityItems = {
 
 // Bit of a hack - we normally want a double newline after a block,
 // but for list items we just want one (unless it's the _last_ list item in a group.)
-const SingleNewlineAfterBlock = ["unordered-list-item", "ordered-list-item"];
+const SingleNewlineAfterBlock = ['unordered-list-item', 'ordered-list-item'];
 
 function isEmptyBlock(block: DraftJS.RawDraftContentBlock) {
   return (
@@ -220,11 +220,11 @@ function renderBlock(
 ) {
   var openInlineStyles = [],
     markdownToAdd = [];
-  var markdownString = "",
+  var markdownString = '',
     customStyleItems = options.styleItems || {},
     customEntityItems = options.entityItems || {},
     escapeMarkdownCharacters = options.hasOwnProperty(
-      "escapeMarkdownCharacters"
+      'escapeMarkdownCharacters'
     )
       ? options.escapeMarkdownCharacters
       : true;
@@ -235,16 +235,16 @@ function renderBlock(
   // (if newlines are preserved each empty line should be "styled" eg in case of blockquote we want to see a blockquote.)
   // but if newlines aren’t preserved then we'd end up having double or triple or etc markdown characters, which is a bug.
   if (isEmptyBlock(block) && !options.preserveNewlines) {
-    type = "unstyled";
+    type = 'unstyled';
   }
 
   // Render main block wrapping element
   if (customStyleItems[type] || StyleItems[type]) {
-    if (type === "unordered-list-item" || type === "ordered-list-item") {
-      markdownString += " ".repeat(block.depth * 4);
+    if (type === 'unordered-list-item' || type === 'ordered-list-item') {
+      markdownString += ' '.repeat(block.depth * 4);
     }
 
-    if (type === "ordered-list-item") {
+    if (type === 'ordered-list-item') {
       orderedListNumber[block.depth] = orderedListNumber[block.depth] || 1;
       markdownString += (customStyleItems[type] || StyleItems[type]).open(
         block,
@@ -354,7 +354,7 @@ function renderBlock(
             customStyleItems[style.style] || StyleItems[style.style]
           ).open();
           markdownToAdd.push({
-            type: "style",
+            type: 'style',
             style: style,
             value: styleToAdd
           });
@@ -374,7 +374,7 @@ function renderBlock(
             customEntityItems[entity.type] || EntityItems[entity.type]
           ).open(entity);
           markdownToAdd.push({
-            type: "entity",
+            type: 'entity',
             value: entityToAdd
           });
         }
@@ -384,15 +384,15 @@ function renderBlock(
     // These are all the opening entity and style types being added to the markdown string for this loop
     // we store in an array and add here because if the character is WS character, we want to hang onto it and not apply it until the next non-whitespace
     // character before adding the markdown, since markdown doesn’t play nice with leading whitespace (eg '** bold**' is no  good, whereas ' **bold**' is good.)
-    if (character !== " " && markdownToAdd.length) {
+    if (character !== ' ' && markdownToAdd.length) {
       markdownString += markdownToAdd
         .map(function(item) {
           return item.value;
         })
-        .join("");
+        .join('');
 
       markdownToAdd.forEach(function(item) {
-        if (item.type === "style") {
+        if (item.type === 'style') {
           // We hang on to this because we may need to close it early and then re-open if there are nested styles being opened and closed.
           openInlineStyles.push(item.style);
         }
@@ -401,9 +401,9 @@ function renderBlock(
       markdownToAdd = [];
     }
 
-    if (block.type !== "code-block" && escapeMarkdownCharacters) {
+    if (block.type !== 'code-block' && escapeMarkdownCharacters) {
       let insideInlineCodeStyle = openInlineStyles.find(
-        style => style.style === "CODE"
+        style => style.style === 'CODE'
       );
 
       if (insideInlineCodeStyle) {
@@ -415,18 +415,18 @@ function renderBlock(
         // Similar work has to be done for codeblocks.
       } else {
         // Escaping inline markdown characters
-        character = character.replace(MARKDOWN_STYLE_CHARACTERS, "\\$1");
+        character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
 
         // Special escape logic for blockquotes and heading characters
         if (
           characterIndex === 0 &&
-          character === "#" &&
+          character === '#' &&
           block.text[1] &&
-          block.text[1] === " "
+          block.text[1] === ' '
         ) {
-          character = character.replace("#", "\\#");
-        } else if (characterIndex === 0 && character === ">") {
-          character = character.replace(">", "\\>");
+          character = character.replace('#', '\\#');
+        } else if (characterIndex === 0 && character === '>') {
+          character = character.replace('>', '\\>');
         }
       }
     }
@@ -471,24 +471,24 @@ function renderBlock(
     SingleNewlineAfterBlock.indexOf(rawDraftObject.blocks[index + 1].type) !==
       -1
   ) {
-    markdownString += "\n";
+    markdownString += '\n';
   } else if (rawDraftObject.blocks[index + 1]) {
     if (rawDraftObject.blocks[index].text) {
       if (
-        (type === "unstyled" && options.preserveNewlines) ||
+        (type === 'unstyled' && options.preserveNewlines) ||
         (SingleNewlineAfterBlock.indexOf(type) !== -1 &&
           SingleNewlineAfterBlock.indexOf(
             rawDraftObject.blocks[index + 1].type
           ) === -1)
       ) {
-        markdownString += "\n\n";
+        markdownString += '\n\n';
       } else if (!options.preserveNewlines) {
-        markdownString += "\n\n";
+        markdownString += '\n\n';
       } else {
-        markdownString += "\n";
+        markdownString += '\n';
       }
     } else if (options.preserveNewlines) {
-      markdownString += "\n";
+      markdownString += '\n';
     }
   }
 
@@ -510,7 +510,7 @@ export function draftToMarkdown(
   options: DraftMarkdownOptions
 ) {
   options = options || {};
-  var markdownString = "";
+  var markdownString = '';
   rawDraftObject.blocks.forEach(function(
     block: DraftJS.RawDraftContentBlock,
     index: number

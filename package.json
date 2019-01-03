@@ -30,5 +30,8 @@
   },
   "jest": {
     "preset": "ts-jest"
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }

@@ -1,5 +1,5 @@
 import * as Remarkable from 'remarkable';
-import {  DraftMarkdownOptions } from './common';
+import { DraftMarkdownOptions } from './common';
 const TRAILING_NEW_LINE = /\n$/;
 
 // In DraftJS, string lengths are calculated differently than in JS itself (due
@@ -17,7 +17,7 @@ function strlen(str) {
 // Why a function? Because in some cases (headers) we need additional information
 // before we can determine the exact key to return. And blocks may also return data
 const DefaultBlockTypes = {
-  paragraph_open: function (item) {
+  paragraph_open: function(item) {
     return {
       type: 'unstyled',
       text: '',
@@ -26,28 +26,28 @@ const DefaultBlockTypes = {
     };
   },
 
-  blockquote_open: function (item) {
+  blockquote_open: function(item) {
     return {
       type: 'blockquote',
       text: ''
     };
   },
 
-  ordered_list_item_open: function () {
+  ordered_list_item_open: function() {
     return {
       type: 'ordered-list-item',
       text: ''
     };
   },
 
-  unordered_list_item_open: function () {
+  unordered_list_item_open: function() {
     return {
       type: 'unordered-list-item',
       text: ''
     };
   },
 
-  fence: function (item) {
+  fence: function(item) {
     return {
       type: 'code-block',
       data: {
@@ -59,15 +59,17 @@ const DefaultBlockTypes = {
     };
   },
 
-  heading_open: function (item) {
-    var type = 'header-' + ({
-      1: 'one',
-      2: 'two',
-      3: 'three',
-      4: 'four',
-      5: 'five',
-      6: 'six'
-    })[item.hLevel];
+  heading_open: function(item) {
+    var type =
+      'header-' +
+      {
+        1: 'one',
+        2: 'two',
+        3: 'three',
+        4: 'four',
+        5: 'five',
+        6: 'six'
+      }[item.hLevel];
 
     return {
       type: type,
@@ -81,7 +83,7 @@ const DefaultBlockTypes = {
 // again. In this case, key is remarkable key, value is
 // meethod that returns the draftjs key + any data needed.
 const DefaultBlockEntities = {
-  link_open: function (item) {
+  link_open: function(item) {
     return {
       type: 'LINK',
       mutability: 'MUTABLE',
@@ -122,10 +124,13 @@ function generateUniqueKey() {
  *  blockEntities: New block eneities to be added to global block entity map
  *  blockEntityRanges: block-level representation of block entities including key to access the block entity from the global map
  *  blockStyleRanges: block-level representation of styles (eg strong, em)
-*/
+ */
 function parseInline(inlineItem, BlockEntities, BlockStyles) {
-  var content = '', blockEntities = {}, blockEntityRanges = [], blockInlineStyleRanges = [];
-  inlineItem.children.forEach(function (child) {
+  var content = '',
+    blockEntities = {},
+    blockEntityRanges = [],
+    blockInlineStyleRanges = [];
+  inlineItem.children.forEach(function(child) {
     if (child.type === 'text') {
       content += child.content;
     } else if (child.type === 'softbreak') {
@@ -155,21 +160,28 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
         length: 0,
         key: key
       });
-    } else if (child.type.indexOf('_close') !== -1 && BlockEntities[child.type.replace('_close', '_open')]) {
-      blockEntityRanges[blockEntityRanges.length - 1].length = strlen(content) - blockEntityRanges[blockEntityRanges.length - 1].offset;
-    } else if (child.type.indexOf('_close') !== -1 && BlockStyles[child.type.replace('_close', '_open')]) {
-      var type = BlockStyles[child.type.replace('_close', '_open')]
-      blockInlineStyleRanges = blockInlineStyleRanges
-        .map(style => {
-          if (style.length === 0 && style.style === type) {
-            style.length = strlen(content) - style.offset;
-          }
-          return style;
-        });
+    } else if (
+      child.type.indexOf('_close') !== -1 &&
+      BlockEntities[child.type.replace('_close', '_open')]
+    ) {
+      blockEntityRanges[blockEntityRanges.length - 1].length =
+        strlen(content) -
+        blockEntityRanges[blockEntityRanges.length - 1].offset;
+    } else if (
+      child.type.indexOf('_close') !== -1 &&
+      BlockStyles[child.type.replace('_close', '_open')]
+    ) {
+      var type = BlockStyles[child.type.replace('_close', '_open')];
+      blockInlineStyleRanges = blockInlineStyleRanges.map(style => {
+        if (style.length === 0 && style.style === type) {
+          style.length = strlen(content) - style.offset;
+        }
+        return style;
+      });
     }
   });
 
-  return {content, blockEntities, blockEntityRanges, blockInlineStyleRanges};
+  return { content, blockEntities, blockEntityRanges, blockInlineStyleRanges };
 }
 
 /**
@@ -179,11 +191,17 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
  * @param {Object} options - optional additional data, see readme for what options can be passed in.
  *
  * @return {Object} rawDraftObject
-**/
+ **/
 
-export function markdownToDraft(string: string, options?: DraftMarkdownOptions) {
+export function markdownToDraft(
+  string: string,
+  options?: DraftMarkdownOptions
+) {
   const remarkablePreset = options.remarkablePreset || 'commonmark';
-  const remarkableOptions = typeof options.remarkableOptions === 'object' ? options.remarkableOptions : null;
+  const remarkableOptions =
+    typeof options.remarkableOptions === 'object'
+      ? options.remarkableOptions
+      : null;
   const md = new Remarkable(remarkablePreset, remarkableOptions);
 
   // TODO: markdownToDisable - I imagine we may want to allow users to customize this.
@@ -193,7 +211,7 @@ export function markdownToDraft(string: string, options?: DraftMarkdownOptions) 
 
   // If users want to define custom remarkable plugins for custom markdown, they can be added here
   if (options.remarkablePlugins) {
-    options.remarkablePlugins.forEach(function (plugin) {
+    options.remarkablePlugins.forEach(function(plugin) {
       md.use(plugin, {});
     });
   }
@@ -205,11 +223,23 @@ export function markdownToDraft(string: string, options?: DraftMarkdownOptions) 
   var previousBlockEndingLine = 1;
 
   // Allow user to define custom BlockTypes and Entities if they so wish
-  const BlockTypes = Object.assign({}, DefaultBlockTypes, options.blockTypes || {});
-  const BlockEntities = Object.assign({}, DefaultBlockEntities, options.blockEntities || {});
-  const BlockStyles = Object.assign({}, DefaultBlockStyles, options.blockStyles || {});
+  const BlockTypes = Object.assign(
+    {},
+    DefaultBlockTypes,
+    options.blockTypes || {}
+  );
+  const BlockEntities = Object.assign(
+    {},
+    DefaultBlockEntities,
+    options.blockEntities || {}
+  );
+  const BlockStyles = Object.assign(
+    {},
+    DefaultBlockStyles,
+    options.blockStyles || {}
+  );
 
-  parsedData.forEach(function (item) {
+  parsedData.forEach(function(item) {
     // Because of how remarkable's data is formatted, we need to cache what kind of list we're currently dealing with
     if (item.type === 'bullet_list_open') {
       currentListType = 'unordered_list_item_open';
@@ -225,7 +255,12 @@ export function markdownToDraft(string: string, options?: DraftMarkdownOptions) 
     if (itemType === 'inline') {
       // Parse inline content and apply it to the most recently created block level item,
       // which is where the inline content will belong.
-      var {content, blockEntities, blockEntityRanges, blockInlineStyleRanges} = parseInline(item, BlockEntities, BlockStyles);
+      var {
+        content,
+        blockEntities,
+        blockEntityRanges,
+        blockInlineStyleRanges
+      } = parseInline(item, BlockEntities, BlockStyles);
       var blockToModify = blocks[blocks.length - 1];
       blockToModify.text = content;
       blockToModify.inlineStyleRanges = blockInlineStyleRanges;
@@ -233,7 +268,10 @@ export function markdownToDraft(string: string, options?: DraftMarkdownOptions) 
 
       // The entity map is a master object separate from the block so just add any entities created for this block to the master object
       Object.assign(entityMap, blockEntities);
-    } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence') && BlockTypes[itemType]) {
+    } else if (
+      (itemType.indexOf('_open') !== -1 || itemType === 'fence') &&
+      BlockTypes[itemType]
+    ) {
       var depth = 0;
       var block;
 
@@ -246,9 +284,12 @@ export function markdownToDraft(string: string, options?: DraftMarkdownOptions) 
       // If there’s nested block level items deeper than that, we need to make sure we capture this by cloning the topmost block
       // otherwise we’ll accidentally overwrite its text. (eg if there's a blockquote with 3 nested paragraphs with inline text, without this check, only the last paragraph would be reflected)
       if (item.level === 0 || item.type === 'list_item_open') {
-        block = Object.assign({
-          depth: depth
-        }, BlockTypes[itemType](item));
+        block = Object.assign(
+          {
+            depth: depth
+          },
+          BlockTypes[itemType](item)
+        );
       } else if (item.level > 0 && blocks[blocks.length - 1].text) {
         block = Object.assign({}, blocks[blocks.length - 1]);
       }
@@ -261,7 +302,8 @@ export function markdownToDraft(string: string, options?: DraftMarkdownOptions) 
         // an appropriate number of extra paragraphs to re-create those newlines in draftjs.
         // This is probably my least favourite thing in this file, but not sure what could be better.
         if (previousBlockEndingLine) {
-          var totalEmptyParagraphsToCreate = item.lines[0] - previousBlockEndingLine;
+          var totalEmptyParagraphsToCreate =
+            item.lines[0] - previousBlockEndingLine;
           for (var i = 0; i < totalEmptyParagraphsToCreate; i++) {
             blocks.push(DefaultBlockTypes.paragraph_open());
           }
@@ -273,7 +315,6 @@ export function markdownToDraft(string: string, options?: DraftMarkdownOptions) 
         blocks.push(block);
       }
     }
-
   });
 
   // EditorState.createWithContent will error if there's no blocks defined
