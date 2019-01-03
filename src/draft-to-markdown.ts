@@ -214,10 +214,10 @@ function isEmptyBlock(block: DraftJS.RawDraftContentBlock) {
  **/
 function renderBlock(
   block: DraftJS.RawDraftContentBlock,
-  index,
+  index: number,
   rawDraftObject: DraftJS.RawDraftContentState,
   options: DraftMarkdownOptions
-) {
+): string {
   var openInlineStyles = [],
     markdownToAdd = [];
   var markdownString = '',
@@ -507,7 +507,7 @@ function renderBlock(
  **/
 export function draftToMarkdown(
   rawDraftObject: DraftJS.RawDraftContentState,
-  options: DraftMarkdownOptions
+  options?: DraftMarkdownOptions
 ) {
   options = options || {};
   var markdownString = '';
