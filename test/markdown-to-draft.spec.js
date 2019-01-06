@@ -23,6 +23,13 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].type).toEqual('unstyled');
   });
 
+  it('renders hardbreaks correctly', function () {
+    var markdown = 'First line  \nSecond line';
+    var conversionResult = markdownToDraft(markdown);
+    expect(conversionResult.blocks[0].text).toEqual('First line\nSecond line');
+    expect(conversionResult.blocks[0].type).toEqual('unstyled');
+  });
+
   describe('blockquotes', function () {
     it('renders blockquotes correctly', function () {
       var markdown = '> Test I am a blockquote';
