@@ -129,6 +129,8 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
       content += child.content;
     } else if (child.type === 'softbreak') {
       content += '\n';
+    } else if (child.type === 'hardbreak') {
+      content += '\n';
     } else if (BlockStyles[child.type]) {
       var key = generateUniqueKey();
       var styleBlock = {
