@@ -529,4 +529,31 @@ describe('markdownToDraft', function () {
       ]
     });
   });
+
+  it('can handle hr', function () {
+    var markdown = 'this is the first line.\n' +
+          '\n' +
+          '---\n' +
+          '\n' +
+          'this is the second line.';
+    var conversionResult = markdownToDraft(markdown, {
+      blockTypes: {
+        hr: function (_item) {
+          return {
+            type: 'HR',
+            text: ''
+          };
+        }
+      }
+    });
+
+    expect(conversionResult.blocks[0].text).toEqual('this is the first line.');
+    expect(conversionResult.blocks[0].type).toEqual('unstyled');
+
+    expect(conversionResult.blocks[1].text).toEqual('');
+    expect(conversionResult.blocks[1].type).toEqual('HR');
+
+    expect(conversionResult.blocks[2].text).toEqual('this is the second line.');
+    expect(conversionResult.blocks[2].type).toEqual('unstyled');
+  });
 });
