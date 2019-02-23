@@ -5,7 +5,8 @@ const TRAILING_WHITESPACE = /[ \u0020\t]*$/;
 // - Back tics  (see https://github.com/Rosey/markdown-draft-js/issues/52#issuecomment-388458017)
 // - Complex markdown, like links or images. Not sure it's even worth it, because if you're typing
 // that into draft chances are you know its markdown and maybe expect it convert? :/
-const MARKDOWN_STYLE_CHARACTERS = /(\*|_|~|\\|`)/;
+const MARKDOWN_STYLE_CHARACTERS = ['*', '_', '~', '`'];
+const MARKDOWN_STYLE_CHARACTER_REGXP = /(\*|_|~|\\|`)/g;
 
 // I hate this a bit, being outside of the function’s scope
 // but can’t think of a better way to keep track of how many ordered list
@@ -219,6 +220,8 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   var type = block.type;
 
+  var markdownStyleCharactersToEscape = [];
+
   // draft-js emits empty blocks that have type set… don’t style them unless the user wants to preserve new lines
   // (if newlines are preserved each empty line should be "styled" eg in case of blockquote we want to see a blockquote.)
   // but if newlines aren’t preserved then we'd end up having double or triple or etc markdown characters, which is a bug.
@@ -364,14 +367,62 @@ function renderBlock(block, index, rawDraftObject, options) {
         // OR ````Test ``` Hello ````
         // Similar work has to be done for codeblocks.
       } else {
-        // Escaping inline markdown characters
-        character = character.replace(MARKDOWN_STYLE_CHARACTERS, '\\$1');
-
         // Special escape logic for blockquotes and heading characters
         if (characterIndex === 0 && character === '#' && block.text[1] && block.text[1] === ' ') {
           character = character.replace('#', '\\#');
         } else if (characterIndex === 0 && character === '>') {
           character = character.replace('>', '\\>');
+        }
+
+        // Escaping inline markdown characters
+        // 🧹 If someone can think of a more elegant solution, I would love that.
+        // orginally this was just a little char replace using a simple regular expression, but there’s lots of cases where
+        // a markdown character does not actually get converted to markdown, like this case: http://google.com/i_am_a_link
+        // so this code now tries to be smart and keeps track of potential “opening” characters as well as potential “closing”
+        // characters, and only escapes if both opening and closing exist, and they have the correct whitepace-before-open, whitespace-or-end-of-string-after-close pattern
+        if (MARKDOWN_STYLE_CHARACTERS.includes(character)) {
+          let openingStyle = markdownStyleCharactersToEscape.find(function (item) {
+            return item.character === character;
+          });
+
+          if (!openingStyle && block.text[characterIndex - 1] === ' ' && block.text[characterIndex + 1] !== ' ') {
+            markdownStyleCharactersToEscape.push({
+              character: character,
+              index: characterIndex,
+              markdownStringIndexStart: markdownString.length + character.length - 1,
+              markdownStringIndexEnd: markdownString.length + character.length
+            });
+          } else if (openingStyle && block.text[characterIndex - 1] === character && characterIndex === openingStyle.index + 1) {
+            openingStyle.markdownStringIndexEnd += 1;
+          } else if (openingStyle) {
+            let openingStyleLength = openingStyle.markdownStringIndexEnd - openingStyle.markdownStringIndexStart;
+            let escapeCharacter = false;
+            let popOpeningStyle = false;
+            if (openingStyleLength === 1 && (block.text[characterIndex + 1] === ' ' || !block.text[characterIndex + 1])) {
+              popOpeningStyle = true;
+              escapeCharacter = true;
+            }
+
+            if (openingStyleLength === 2 && block.text[characterIndex + 1] === character) {
+              escapeCharacter = true;
+            }
+
+            if (openingStyleLength === 2 && block.text[characterIndex - 1] === character && (block.text[characterIndex + 1] === ' ' || !block.text[characterIndex + 1])) {
+              popOpeningStyle = true;
+              escapeCharacter = true;
+            }
+
+            if (popOpeningStyle) {
+              markdownStyleCharactersToEscape.splice(markdownStyleCharactersToEscape.indexOf(openingStyle), 1);
+              let replacementString = markdownString.slice(openingStyle.markdownStringIndexStart, openingStyle.markdownStringIndexEnd);
+              replacementString = replacementString.replace(MARKDOWN_STYLE_CHARACTER_REGXP, '\\$1');
+              markdownString = (markdownString.slice(0, openingStyle.markdownStringIndexStart) + replacementString + markdownString.slice(openingStyle.markdownStringIndexEnd));
+            }
+
+            if (escapeCharacter) {
+              character = `\\${character}`;
+            }
+          }
         }
       }
     }

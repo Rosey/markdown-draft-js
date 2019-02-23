@@ -404,6 +404,31 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('Test \\_not italic\\_ Test \\*\\*not bold\\*\\*');
     });
 
+    it('escapes complex inline markdown characters', function () {
+      /* eslint-disable */
+      var rawObject = { "entityMap": {}, "blocks": [{ "key": "dvfr1", "text": "Test _not **i** t**a**lic_ T_est **not bold** _hi_ ok **notmatching* smile!", "type": "unstyled", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }] };
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('Test \\_not \\*\\*i\\*\\* t**a**lic\\_ T_est \\*\\*not bold\\*\\* \\_hi\\_ ok **notmatching* smile!');
+    });
+
+    it('doesn’t escape inline markdown characters in cases where they aren’t valid as markdown', function () {
+      /* eslint-disable */
+      var rawObject = { "entityMap": {}, "blocks": [{ "key": "dvfr1", "text": "Test_not italic_ Test**not bold**", "type": "unstyled", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }] };
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('Test_not italic_ Test**not bold**');
+
+      /* eslint-disable */
+      rawObject = { "entityMap": {}, "blocks": [{ "key": "dvfr1", "text": "Test _not italic Test not bold", "type": "unstyled", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }] };
+      /* eslint-enable */
+
+      markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('Test _not italic Test not bold');
+    });
+
     it ('escapes block markdown characters when at start of line', function () {
       /* eslint-disable */
       var rawObject = {"entityMap":{},"blocks":[{"key":"dvfr1","text":"# Test _not # italic_ Test **not bold**","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
