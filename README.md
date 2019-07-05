@@ -121,6 +121,32 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
 });
 ```
 
+#### Enabling / Disabling rules
+
+It's possible to enable or disable specific rules. Remarkable categorizes them into three groups, every file represents a possible rule:
+
+- [Inline](https://github.com/jonschlinkert/remarkable/tree/master/lib/rules_inline) (e.g. links, bold, italic)
+- [Block](https://github.com/jonschlinkert/remarkable/tree/master/lib/rules_block) (e.g. tables, headings)
+- [Core](https://github.com/jonschlinkert/remarkable/tree/master/lib/rules_core) (e.g. automatic link conversion or abbreviations)
+
+```javascript
+var rawDraftJSObject = markdownToDraft(markdownString, {
+  remarkablePreset: 'commonmark',
+  remarkableOptions: {
+    disable: {
+      inline: ['links', 'emphasis'],
+      block: ['heading']
+    },
+    enable: {
+      block: 'table',
+      core: ['abbr']
+    }
+  }
+});
+```
+
+The `table` rule is disabled by default but could be enabled like in the example above.
+
 ### More options
 
 `preserveNewlines` can be passed in to preserve empty whitespace newlines. By default, markdown rules specify that blank whitespace is collapsed, but in the interest in maintaining 1:1 parity with draft appearance-wise, this option can be turned on if you like :)
