@@ -186,11 +186,31 @@ function markdownToDraft(string, options = {}) {
   const remarkableOptions = typeof options.remarkableOptions === 'object' ? options.remarkableOptions : null;
   const md = new Remarkable(remarkablePreset, remarkableOptions);
 
-  // TODO: markdownToDisable - I imagine we may want to allow users to customize this.
-  // and also a way to enable specific special markdown, as that’s another thing remarkable allows.
-  const markdownToDisable = ['table'];
-  md.block.ruler.disable(markdownToDisable);
+  // if tables are not explicitly enabled, disable them by default
+  if (
+    !remarkableOptions ||
+    !remarkableOptions.enable ||
+    !remarkableOptions.enable.block ||
+    remarkableOptions.enable.block !== 'table' ||
+    remarkableOptions.enable.block.includes('table') === false
+  ) {
+    md.block.ruler.disable('table');
+  }
 
+  // disable the specified rules
+  if (remarkableOptions && remarkableOptions.disable) {
+    for (let [key, value] of Object.entries(remarkableOptions.disable)) {
+      md[key].ruler.disable(value);
+    }
+  }
+
+  // enable the specified rules
+  if (remarkableOptions && remarkableOptions.enable) {
+    for (let [key, value] of Object.entries(remarkableOptions.enable)) {
+      md[key].ruler.enable(value);
+    }
+  }
+  
   // If users want to define custom remarkable plugins for custom markdown, they can be added here
   if (options.remarkablePlugins) {
     options.remarkablePlugins.forEach(function (plugin) {
