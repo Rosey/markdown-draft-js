@@ -1,4 +1,5 @@
-const Remarkable = require('remarkable');
+import Remarkable from 'remarkable';
+
 const TRAILING_NEW_LINE = /\n$/;
 
 // In DraftJS, string lengths are calculated differently than in JS itself (due
@@ -309,4 +310,4 @@ function markdownToDraft(string, options = {}) {
   };
 }
 
-module.exports = markdownToDraft;
+export default markdownToDraft;

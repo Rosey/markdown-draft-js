@@ -1,4 +1,2 @@
-const draftToMarkdown = require('./draft-to-markdown');
-const markdownToDraft = require('./markdown-to-draft');
-
-module.exports = { draftToMarkdown, markdownToDraft };
+export { default as draftToMarkdown } from './draft-to-markdown';
+export { default as markdownToDraft } from './markdown-to-draft';
