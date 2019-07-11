@@ -9,8 +9,9 @@
     "url": "https://github.com/Rosey/markdown-draft-js.git"
   },
   "main": "lib/index.js",
+  "module": "esm/index.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "build": "babel src --out-dir lib && NODE_ENV=esm babel src --out-dir esm",
     "prepublish": "npm run build",
     "test": "karma start --single-run",
     "lint": "eslint ./src",

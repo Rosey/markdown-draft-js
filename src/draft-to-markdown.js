@@ -496,4 +496,4 @@ function draftToMarkdown(rawDraftObject, options) {
   return markdownString;
 }
 
-module.exports = draftToMarkdown;
+export default draftToMarkdown;
