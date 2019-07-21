@@ -211,7 +211,7 @@ function markdownToDraft(string, options = {}) {
       md[key].ruler.enable(value);
     }
   }
-  
+
   // If users want to define custom remarkable plugins for custom markdown, they can be added here
   if (options.remarkablePlugins) {
     options.remarkablePlugins.forEach(function (plugin) {
