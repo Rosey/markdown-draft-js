@@ -17,6 +17,11 @@
     "lint": "eslint ./src",
     "lint:tests": "eslint ./test"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint && npm run lint:tests"
+    }
+  },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
@@ -25,6 +30,7 @@
     "babelify": "^10.0.0",
     "browserify": "^16.3.0",
     "eslint": "^6.1.0",
+    "husky": "^3.0.2",
     "jasmine": "^3.4.0",
     "jasmine-core": "^3.4.0",
     "karma": "^4.2.0",
