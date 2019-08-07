@@ -10,7 +10,7 @@ A tool for converting [Draft.js](https://facebook.github.io/draft-js/) [raw obje
 
 I started this project in 2016 because I was in need of a draft/markdown conversion tool that could handle custom entities, such as mentions, and the existing conversion tools out there didn’t support these slightly complex needs. I was also finding various bugs with the existing conversion tools and none of them seemed to be maintained, so I decided to write my own.
 
-I don’t spend a ton of time keeping tabs on other draftjs markdown conversion tools out there, but I believe there are a few that are actively maintained and significantly more popular than this one, such as [draft-js-export-markdown](https://github.com/sstur/draft-js-utils/tree/master/packages/draft-js-export-markdown). Before choosing this project, I encourage you to do your research! This may still be the best tool for what you need, but it’s always worth being critical and looking at all your options 😃
+It’s now 2019 and the landscape has potentially changed! I don’t spend a ton of time keeping tabs on other draftjs markdown conversion tools out there, but I believe there are a few that are actively maintained and significantly more popular than this one, such as [draft-js-export-markdown](https://github.com/sstur/draft-js-utils/tree/master/packages/draft-js-export-markdown). Before choosing this project, I encourage you to do your research! This may still be the best tool for what you need, but it’s always worth being critical and looking at all your options 😃 Stability wise, I use markdown-draft-js in a production environment with over 10k monthly active users and it has served very well so far.
 
 ## Basic Usage
 
