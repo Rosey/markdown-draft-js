@@ -1,10 +1,16 @@
-⭐️ **A quick maintenance note:** I ([Rosey](https://github.com/Rosey)) work full time and am the mom to both a toddler and a high–energy dog, and this is just a side–project 😇 Therefore, it’s much appreciated if people who encounter bugs and are able to do so, they open a PR with a proposed fix (vs opening an issue and waiting for me to fix it). OR if you happen to be using this library and see an open issue you’re able to fix, I would love it if you opened a PR with that fix! Of course, feel free to continue to open issues if you don’t have the time or knowledge to fix a bug you notice, I just want to set the expectation that response time will not be super speedy 🙃 I’ll do my best to review and merge any PRs that do get opened. Thank you! ❤️ And thank you to everyone who has helped out and contributed to this project, it has been a real delight 🥰
+⭐️ **A quick maintenance note:** I ([Rosey](https://github.com/Rosey)) work full time and am the mom to a toddler, a soon-to-be newborn (coming Dec 2019), and a high–energy dog, and this is just a side–project 😇 Therefore, it’s much appreciated if people who encounter bugs and are able to do so, they open a PR with a proposed fix (vs opening an issue and waiting for me to fix it). OR if you happen to be using this library and see an open issue you’re able to fix, I would love it if you opened a PR with that fix! Of course, feel free to continue to open issues if you don’t have the time or knowledge to fix a bug you notice, I just want to set the expectation that response time will not be super speedy 🙃 I’ll do my best to review and merge any PRs that do get opened. Thank you! ❤️ And thank you to everyone who has helped out and contributed to this project, it has been a real delight 🥰
 
 # Markdown draft js
 
 A tool for converting [Draft.js](https://facebook.github.io/draft-js/) [raw object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) to [markdown](https://daringfireball.net/projects/markdown/), and vice-versa.
 
 **Looking for an example?** [There is a running example here](https://rosey.github.io/markdown-draft-js/)
+
+### Markdown draft js vs other similar projects - what’s the story?
+
+I started this project in 2016 because I was in need of a draft/markdown conversion tool that could handle custom entities, such as mentions, and the existing conversion tools out there didn’t support these slightly complex needs. I was also finding various bugs with the existing conversion tools and none of them seemed to be maintained, so I decided to write my own.
+
+I don’t spend a ton of time keeping tabs on other draftjs markdown conversion tools out there, but I believe there are a few that are actively maintained and significantly more popular than this one, such as [draft-js-export-markdown](https://github.com/sstur/draft-js-utils/tree/master/packages/draft-js-export-markdown). Before choosing this project, I encourage you to do your research! This may still be the best tool for what you need, but it’s always worth being critical and looking at all your options 😃
 
 ## Basic Usage
 
