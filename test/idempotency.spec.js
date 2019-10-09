@@ -79,6 +79,15 @@ describe('idempotency', function () {
     expect(markdownFromDraft).toEqual(markdownString);
   });
 
+  // TODO this test should pass but markdown-to-draft doesn’t correctly create empty markdown blocks in this case currently.
+  xit('renders blockquotes with blank lines correctly', function () {
+    var markdownString = '> Hello I am Blockquote\n> more\n> \n> \n> hey';
+    var draftJSObject = markdownToDraft(markdownString);
+    var markdownFromDraft = draftToMarkdown(draftJSObject);
+
+    expect(markdownFromDraft).toEqual(markdownString);
+  });
+
   it('renders links correctly', function () {
     var markdown = 'This is a test of [a link](https://google.com)\n\nAnd [perhaps](https://facebook.github.io/draft-js/) we should test once more.';
     var rawDraftConversion = markdownToDraft(markdown);

@@ -59,6 +59,21 @@ describe('draftToMarkdown', function () {
       markdown = draftToMarkdown(rawObject, {preserveNewlines: true});
       expect(markdown).toEqual('### \n### Header 1\n### \n### Header 2');
     });
+
+    it('handles blank lines with blockquotes', function () {
+      // draft-js can have blank lines that have block styles.
+      // This would result in double-application of markdown line prefixes.
+
+      /* eslint-disable */
+      const rawObject = { "blocks": [{ "key": "eg79g", "text": "one\n\nblockquote", "type": "blockquote", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} },{"depth":0,"type":"unstyled","text":"Hello :)","entityRanges":[],"inlineStyleRanges":[]}]};
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('> one\n> \n> blockquote\n\nHello :)');
+
+      markdown = draftToMarkdown(rawObject, {preserveNewlines: true});
+      expect(markdown).toEqual('> one\n> \n> blockquote\n\nHello :)');
+    });
   });
 
   describe('entity conversion', function () {

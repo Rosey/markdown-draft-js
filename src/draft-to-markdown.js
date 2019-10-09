@@ -427,7 +427,11 @@ function renderBlock(block, index, rawDraftObject, options) {
       }
     }
 
-    markdownString += character;
+    if (character === '\n' && type === 'blockquote') {
+      markdownString += '\n> ';
+    } else {
+      markdownString += character;
+    }
   });
 
   // Close any remaining entity tags
@@ -458,7 +462,7 @@ function renderBlock(block, index, rawDraftObject, options) {
     markdownString += '\n';
   } else if (rawDraftObject.blocks[index + 1]) {
     if (rawDraftObject.blocks[index].text) {
-      if (type === 'unstyled' && options.preserveNewlines
+      if ((type === 'unstyled' || type === 'blockquote') && options.preserveNewlines
         || SingleNewlineAfterBlock.indexOf(type) !== -1
           && SingleNewlineAfterBlock.indexOf(rawDraftObject.blocks[index + 1].type) === -1) {
         markdownString += '\n\n';
