@@ -1,4 +1,4 @@
-const TRAILING_WHITESPACE = /[ \u0020\t]*$/;
+const TRAILING_WHITESPACE = /[ \u0020\t\n]*$/;
 
 // This escapes some markdown but there's a few cases that are TODO -
 // - List items

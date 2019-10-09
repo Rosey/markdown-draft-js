@@ -18,6 +18,13 @@ describe('draftToMarkdown', function () {
 
       var markdown = draftToMarkdown(rawObject);
       expect(markdown).toEqual('Test **Bold Text** Test');
+
+      /* eslint-disable */
+      rawObject = {"blocks":[{"key":"4mmbt","text":"Test\n\nI am some bold text\nI will not be bold","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":6,"length":20,"style":"BOLD"}],"entityRanges":[],"data":{}}],"entityMap":{}};
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('Test\n\n**I am some bold text**\nI will not be bold');
     });
 
     it('renders inline styled text with trailing whitespace correctly when trailing whitespace is the last character', function () {
