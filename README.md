@@ -38,6 +38,43 @@ import { markdownToDraft } from 'markdown-draft-js';
 var rawObject = markdownToDraft(markdownString);
 ```
 
+## Example
+
+```javascript
+[---]
+
+import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
+import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
+
+[---]
+
+constructor(props) {
+  super(props);
+
+  // Convert input from markdown to draftjs state
+  const markdownString = this.props.markdownString;
+  const rawData = markdownToDraft(markdownString);
+  const contentState = convertFromRaw(rawData);
+  const newEditorState = EditorState.createWithContent(contentState);
+  this.state = {
+    editorState: newEditorState,
+  };
+
+  this.onChange = (editorState) => {
+    this.setState({ editorState });
+
+    // Convert draftjs state to markdown
+    const content = this.state.editorState.getCurrentContent();
+    const rawObject = convertToRaw(content);
+    const markdownString = draftToMarkdown(rawObject);
+
+    // Do something with the markdown
+  };
+}
+
+[---]
+```
+
 ## Custom Values
 
 In case you want to extend markdown’s functionality, you can. `draftToMarkdown` accepts an (optional) second `options` argument.
