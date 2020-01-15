@@ -22,7 +22,6 @@ describe('idempotency', function () {
 
     expect(markdownFromDraft).toEqual(markdownString);
 
-
     markdownString = 'a\nb\n\nc\n\n\nd';
     draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
     markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
