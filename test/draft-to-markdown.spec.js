@@ -52,6 +52,21 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('**_bold/italic_** plain');
     });
 
+    it('handles unstyled blank lines', function () {
+      // draft-js can have blank lines that have block styles.
+      // This would result in double-application of markdown line prefixes.
+
+      /* eslint-disable */
+      const rawObject = {"blocks":[{"key":"8i76c","text":"a","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"3htgs","text":"b","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"c46o4","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"l5v1","text":"c","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"cbsdo","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"9i2da","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"9mr0v","text":"d","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('a\n\nb\n\nc\n\nd');
+
+      markdown = draftToMarkdown(rawObject, {preserveNewlines: true});
+      expect(markdown).toEqual('a\nb\n\nc\n\n\nd');
+    });
+
     it('handles blank lines with styled block types', function () {
       // draft-js can have blank lines that have block styles.
       // This would result in double-application of markdown line prefixes.
