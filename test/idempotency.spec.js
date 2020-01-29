@@ -43,6 +43,13 @@ describe('idempotency', function () {
     expect(markdownFromDraft).toEqual(markdownString);
   });
 
+  it('renders blockquotes correctly', function () {
+    var markdownString = '> Hello I am Blockquote\n\nI am not\n\n> I am';
+    var draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
+    var markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
+    expect(markdownFromDraft).toEqual(markdownString);
+  });
+
   it('renders italic text correctly', function () {
     var markdownString = '_I am italic_ …I am not italic.';
     var draftJSObject = markdownToDraft(markdownString);
