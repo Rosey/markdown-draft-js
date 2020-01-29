@@ -94,7 +94,7 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('> one\n> \n> blockquote\n\nHello :)');
 
       markdown = draftToMarkdown(rawObject, {preserveNewlines: true});
-      expect(markdown).toEqual('> one\n> \n> blockquote\n\nHello :)');
+      expect(markdown).toEqual('> one\n> \n> blockquote\nHello :)');
     });
   });
 
