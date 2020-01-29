@@ -28,6 +28,11 @@ describe('idempotency', function () {
 
     expect(markdownFromDraft).toEqual(markdownString);
 
+    markdownString = '\n\na';
+    draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
+    markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
+    expect(markdownFromDraft).toEqual(markdownString);
+
   });
 
   it('renders new lines text correctly with styled blocks', function () {
