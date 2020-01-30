@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.0] - 2020-01-30
+
+- Fixed issue with newlines not always matching correctly when `preserveNewlines: true` is set. Issue outlining the bug here: https://github.com/Rosey/markdown-draft-js/issues/111
+
 ## [2.1.1] - 2019-10-10
 ### Fixes
 
