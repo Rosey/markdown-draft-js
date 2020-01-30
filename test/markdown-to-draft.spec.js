@@ -23,6 +23,31 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].type).toEqual('unstyled');
   });
 
+  it('renders unstyled blank lines correctly', function () {
+    var markdown = 'a\nb\n\nc\n\n\nd';
+    var conversionResult = markdownToDraft(markdown);
+    expect(conversionResult.blocks[0].text).toEqual('a\nb');
+    expect(conversionResult.blocks[0].type).toEqual('unstyled');
+    expect(conversionResult.blocks[1].text).toEqual('c');
+    expect(conversionResult.blocks[1].type).toEqual('unstyled');
+    expect(conversionResult.blocks[2].text).toEqual('d');
+    expect(conversionResult.blocks[2].type).toEqual('unstyled');
+
+    conversionResult = markdownToDraft(markdown, {preserveNewlines: true});
+    expect(conversionResult.blocks[0].text).toEqual('a\nb');
+    expect(conversionResult.blocks[0].type).toEqual('unstyled');
+    expect(conversionResult.blocks[1].text).toEqual('');
+    expect(conversionResult.blocks[1].type).toEqual('unstyled');
+    expect(conversionResult.blocks[2].text).toEqual('c');
+    expect(conversionResult.blocks[2].type).toEqual('unstyled');
+    expect(conversionResult.blocks[3].text).toEqual('');
+    expect(conversionResult.blocks[3].type).toEqual('unstyled');
+    expect(conversionResult.blocks[4].text).toEqual('');
+    expect(conversionResult.blocks[4].type).toEqual('unstyled');
+    expect(conversionResult.blocks[5].text).toEqual('d');
+    expect(conversionResult.blocks[5].type).toEqual('unstyled');
+  });
+
   it('renders hardbreaks correctly', function () {
     var markdown = 'First line  \nSecond line';
     var conversionResult = markdownToDraft(markdown);

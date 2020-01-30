@@ -462,13 +462,11 @@ function renderBlock(block, index, rawDraftObject, options) {
     markdownString += '\n';
   } else if (rawDraftObject.blocks[index + 1]) {
     if (rawDraftObject.blocks[index].text) {
-      if ((type === 'unstyled' || type === 'blockquote') && options.preserveNewlines
-        || SingleNewlineAfterBlock.indexOf(type) !== -1
+      if (SingleNewlineAfterBlock.indexOf(type) !== -1
           && SingleNewlineAfterBlock.indexOf(rawDraftObject.blocks[index + 1].type) === -1) {
         markdownString += '\n\n';
-      } else if (!options.preserveNewlines
-        || (rawDraftObject.blocks[index + 1] && !rawDraftObject.blocks[index + 1].text && rawDraftObject.blocks[index + 1].type === 'unstyled' && options.preserveNewlines)) {
-        // 2 newlines if not preserving OR if this block is styled but the next block is a blank newline
+      } else if (!options.preserveNewlines) {
+        // 2 newlines if not preserving
         markdownString += '\n\n';
       } else {
         markdownString += '\n';
