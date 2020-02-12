@@ -10,6 +10,7 @@
   },
   "main": "lib/index.js",
   "module": "esm/index.js",
+  "types": "index.d.ts",
   "scripts": {
     "build": "babel src --out-dir lib && NODE_ENV=esm babel src --out-dir esm",
     "prepublish": "npm run build",
@@ -29,6 +30,7 @@
     "babel-eslint": "^10.0.2",
     "babelify": "^10.0.0",
     "browserify": "^16.3.0",
+    "draft-js": "^0.11.4",
     "eslint": "^6.1.0",
     "husky": "^3.0.2",
     "jasmine": "^3.4.0",
