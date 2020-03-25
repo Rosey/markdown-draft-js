@@ -126,11 +126,11 @@ Since entities can also contain additional custom information - in this case, th
 
 What if you wanted to go the opposite direction? markdownToDraft uses [Remarkable](https://github.com/jonschlinkert/remarkable) for defining custom markdown types.
 
-In this case, you need to write a [remarkable plugin](https://github.com/jonschlinkert/remarkable/blob/master/docs/plugins.md) first and pass it in to `markdownToDraft` -
+In this case, you need to write a [remarkable plugin](https://github.com/jonschlinkert/remarkable/blob/master/docs/plugins.md) first such as [mentionWrapper](https://github.com/Rosey/markdown-draft-js/blob/master/test/markdown-to-draft.spec.js#L369) and pass it in to `markdownToDraft` -
 
 ```javascript
 var rawDraftJSObject = markdownToDraft(markdownString, {
-  remarkablePlugins: [remarkableMentionPlugin],
+  remarkablePlugins: [mentionWrapper],
   blockEntities: {
     mention_open: function (item) {
       return {
