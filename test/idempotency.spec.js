@@ -21,6 +21,18 @@ describe('idempotency', function () {
     var markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
 
     expect(markdownFromDraft).toEqual(markdownString);
+
+    markdownString = 'a\nb\n\nc\n\n\nd';
+    draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
+    markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
+
+    expect(markdownFromDraft).toEqual(markdownString);
+
+    markdownString = '\n\na';
+    draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
+    markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
+    expect(markdownFromDraft).toEqual(markdownString);
+
   });
 
   it('renders new lines text correctly with styled blocks', function () {
@@ -28,6 +40,13 @@ describe('idempotency', function () {
     var draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
     var markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
 
+    expect(markdownFromDraft).toEqual(markdownString);
+  });
+
+  it('renders blockquotes correctly', function () {
+    var markdownString = '> Hello I am Blockquote\n\nI am not\n\n> I am';
+    var draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
+    var markdownFromDraft = draftToMarkdown(draftJSObject, {preserveNewlines: true});
     expect(markdownFromDraft).toEqual(markdownString);
   });
 
