@@ -63,13 +63,13 @@ constructor(props) {
   };
 
   this.onChange = (editorState) => {
-    this.setState({ editorState });
-
-    // Convert draftjs state to markdown
-    const content = this.state.editorState.getCurrentContent();
-    const rawObject = convertToRaw(content);
-    const markdownString = draftToMarkdown(rawObject);
-
+    this.setState({ editorState },
+    () => {
+      // Convert draftjs state to markdown
+      const content = this.state.editorState.getCurrentContent();
+      const rawObject = convertToRaw(content);
+      const markdownString = draftToMarkdown(rawObject);
+    });
     // Do something with the markdown
   };
 }
