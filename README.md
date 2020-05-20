@@ -66,7 +66,7 @@ constructor(props) {
     this.setState({ editorState });
 
     // Convert draftjs state to markdown
-    const content = this.state.editorState.getCurrentContent();
+    const content = editorState.getCurrentContent();
     const rawObject = convertToRaw(content);
     const markdownString = draftToMarkdown(rawObject);
 
