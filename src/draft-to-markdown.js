@@ -436,7 +436,7 @@ function renderBlock(block, index, rawDraftObject, options) {
 
   // Close any remaining entity tags
   block.entityRanges.forEach(function (range, rangeIndex) {
-    if (range.offset + range.length === block.text.length) {
+    if (range.offset + range.length === Array.from(block.text).length) {
       var entity = rawDraftObject.entityMap[range.key];
       if (customEntityItems[entity.type] || EntityItems[entity.type]) {
         markdownString += (customEntityItems[entity.type] || EntityItems[entity.type]).close(entity);
