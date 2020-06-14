@@ -218,6 +218,31 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('This is a test of [a link](https://google.com)\n\nAnd [perhaps](https://facebook.github.io/draft-js/) we should test once more.');
     });
 
+    it('renders links with surrogate pairs (e.g. some emoji) correctly', function () {
+      /* eslint-disable */
+      var rawObject = {
+        "blocks": [{
+          "key": "eubc2",
+          "text": "🙋 link link",
+          "type": "unstyled",
+          "depth": 0,
+          "inlineStyleRanges": [],
+          "entityRanges": [{"offset": 2, "length": 4, "key": 0}, {"offset": 7, "length": 4, "key": 1}],
+          "data": {}
+        }],
+        "entityMap": {
+          "0": {
+            "type": "LINK",
+            "mutability": "MUTABLE",
+            "data": {"url": "https://link.com", "href": "https://link.com"}
+          }, "1": {"type": "LINK", "mutability": "MUTABLE", "data": {"url": "https://link.com"}}
+        }
+      }
+      /* eslint-enable */
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('🙋 [link](https://link.com) [link](https://link.com)');
+    });
+
     it('renders links with a HREF correctly', function () {
       /* eslint-disable */
       var rawObject = {"entityMap":{"0":{"type":"LINK","mutability":"MUTABLE","data":{"href":"https://google.com"}},"1":{"type":"LINK","mutability":"MUTABLE","data":{"href":"https://facebook.github.io/draft-js/"}}},"blocks":[{"key":"58spd","text":"This is a test of a link","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":18,"length":6,"key":0}],"data":{}},{"key":"9ln6g","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"3euar","text":"And perhaps we should test once more.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":4,"length":7,"key":1}],"data":{}}]};
