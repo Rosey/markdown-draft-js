@@ -40,6 +40,6 @@
     "watchify": "^3.11.1"
   },
   "dependencies": {
-    "remarkable": "2.0.0"
+    "remarkable": "^2.0.1"
   }
 }
