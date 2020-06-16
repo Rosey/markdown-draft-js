@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.1] - 2020-06-16
+
+- Update remarkable dependency (https://github.com/Rosey/markdown-draft-js/pull/126)
+- Reduce package size (https://github.com/Rosey/markdown-draft-js/pull/125)
+- Fix bug with some unicode surrogate pairs and entity items on draft-to-markdown (https://github.com/Rosey/markdown-draft-js/pull/123)
+
 ## [2.2.0] - 2020-01-30
 
 - Fixed issue with newlines not always matching correctly when `preserveNewlines: true` is set. Issue outlining the bug here: https://github.com/Rosey/markdown-draft-js/issues/111
