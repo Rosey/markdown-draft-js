@@ -4,7 +4,7 @@
 
 # Markdown draft js
 
-A tool for converting [Draft.js](https://facebook.github.io/draft-js/) [raw object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html) to [markdown](https://daringfireball.net/projects/markdown/), and vice-versa.
+A tool for converting [Draft.js](https://draftjs.org) [raw object](https://draftjs.org/docs/api-reference-data-conversion) to [markdown](https://daringfireball.net/projects/markdown/), and vice-versa.
 
 **Looking for an example?** [There is a running example here](https://rosey.github.io/markdown-draft-js/)
 
@@ -18,7 +18,7 @@ It’s now 2019 and the landscape has potentially changed! I don’t spend a ton
 
 Please note: We recommend using a polyfill (like babel-polyfill) since we're using a bunch of modern array methods.
 
-`draftToMarkdown` expects a [RAW Draft.js JS object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html).
+`draftToMarkdown` expects a [RAW Draft.js JS object](https://draftjs.org/docs/api-reference-data-conversion).
 
 It returns a string of markdown.
 
@@ -31,7 +31,7 @@ var markdownString = draftToMarkdown(rawObject);
 
 `markdownToDraft` expects a string containing markdown.
 
-It returns a [RAW Draft.js JS object](https://facebook.github.io/draft-js/docs/api-reference-data-conversion.html).
+It returns a [RAW Draft.js JS object](https://draftjs.org/docs/api-reference-data-conversion).
 
 ```javascript
 // First, import `draftToMarkdown`
@@ -81,7 +81,7 @@ constructor(props) {
 
 In case you want to extend markdown’s functionality, you can. `draftToMarkdown` accepts an (optional) second `options` argument.
 
-It takes two values: `styleItems` and `entityItems`. This is because of a distinction in draftjs between styles and entities. You can read more about them on [Draft’s documentation](https://facebook.github.io/draft-js/docs/api-reference-character-metadata.html).
+It takes two values: `styleItems` and `entityItems`. This is because of a distinction in draftjs between styles and entities. You can read more about them on [Draft’s documentation](https://draftjs.org/docs/api-reference-character-metadata).
 
 Say I wanted to convert <span style="color: red">**red text**</span> from my Draft.js editor to a span with a red colour style. Unless I write a custom method for it, the markdown parser will ignore this special style, since it’s not a normal, pre-defined style. (An example of this style item is defined in one of the Draft.js [custom colours](https://github.com/facebook/draft-js/tree/master/examples/color) examples.)
 
