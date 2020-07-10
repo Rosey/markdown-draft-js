@@ -254,88 +254,114 @@ function renderBlock(block, index, rawDraftObject, options) {
     }
   }
 
+  // A stack to keep track of open tags
+  var openTags = [];
+
+  function openTag(tag) {
+    openTags.push(tag);
+
+    if (tag.style) {
+      // Open inline tag
+
+      if (customStyleItems[tag.style] || StyleItems[tag.style]) {
+        var styleToAdd = (
+          customStyleItems[tag.style] || StyleItems[tag.style]
+        ).open();
+        markdownToAdd.push({
+          type: 'style',
+          style: tag,
+          value: styleToAdd
+        });
+      }
+    } else {
+      // Open entity tag
+
+      var entity = rawDraftObject.entityMap[tag.key];
+      if (customEntityItems[entity.type] || EntityItems[entity.type]) {
+        var entityToAdd = (
+          customEntityItems[entity.type] || EntityItems[entity.type]
+        ).open(entity);
+        markdownToAdd.push({
+          type: 'entity',
+          value: entityToAdd
+        });
+      }
+    }
+  }
+
+  function closeTag(tag) {
+    const popped = openTags.pop();
+    if (tag !== popped) {
+      throw new Error(
+        'Invariant violation: Cannot close a tag before all inner tags have been closed'
+      );
+    }
+
+    if (tag.style) {
+      // Close inline tag
+
+      if (customStyleItems[tag.style] || StyleItems[tag.style]) {
+        // Have to trim whitespace first and then re-add after because markdown can't handle leading/trailing whitespace
+        var trailingWhitespace = TRAILING_WHITESPACE.exec(markdownString);
+        markdownString = markdownString.slice(
+          0,
+          markdownString.length - trailingWhitespace[0].length
+        );
+
+        markdownString += (
+          customStyleItems[tag.style] || StyleItems[tag.style]
+        ).close();
+        markdownString += trailingWhitespace[0];
+      }
+    } else {
+      // Close entity tag
+
+      var entity = rawDraftObject.entityMap[tag.key];
+      if (customEntityItems[entity.type] || EntityItems[entity.type]) {
+        markdownString += (
+          customEntityItems[entity.type] || EntityItems[entity.type]
+        ).close(entity);
+      }
+    }
+  }
+
+  const compareTagsLastCloseFirst = (a, b) =>
+    b.offset + b.length - (a.offset + a.length);
+
+  // reverse array without mutating the original
+  const reverse = (array) => array.concat().reverse();
+
   // Render text within content, along with any inline styles/entities
   Array.from(block.text).some(function (character, characterIndex) {
-    // Close any entity tags that need closing
-    block.entityRanges.forEach(function (range, rangeIndex) {
-      if (range.offset + range.length === characterIndex) {
-        var entity = rawDraftObject.entityMap[range.key];
-        if (customEntityItems[entity.type] || EntityItems[entity.type]) {
-          markdownString += (customEntityItems[entity.type] || EntityItems[entity.type]).close(entity);
-        }
+    // Close any tags that need closing, starting from top of the stack
+    reverse(openTags).forEach(function (tag) {
+      if (tag.offset + tag.length === characterIndex) {
+        // Take all tags stacked on top of the current one, meaning they opened after it.
+        // Since they have not been popped, they'll close only later. So we need to split them.
+        var tagsToSplit = openTags.slice(openTags.indexOf(tag) + 1);
+
+        // Close in reverse order as they were opened
+        reverse(tagsToSplit).forEach(closeTag);
+
+        // Now we can close the current tag
+        closeTag(tag);
+
+        // Reopen split tags, ordered so that tags that close last open first
+        tagsToSplit.sort(compareTagsLastCloseFirst).forEach(openTag);
       }
     });
 
-    // Close any inline tags that need closing
-    openInlineStyles.forEach(function (style, styleIndex) {
-      if (style.offset + style.length === characterIndex) {
-        if ((customStyleItems[style.style] || StyleItems[style.style])) {
-          var styleIndex = openInlineStyles.indexOf(style);
-          // Handle nested case - close any open inline styles before closing the parent
-          if (styleIndex > -1 && styleIndex !== openInlineStyles.length - 1) {
-            for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
-              var styleItem = (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]);
-              if (styleItem) {
-                var trailingWhitespace = TRAILING_WHITESPACE.exec(markdownString);
-                markdownString = markdownString.slice(0, markdownString.length - trailingWhitespace[0].length);
-                markdownString += styleItem.close();
-                markdownString += trailingWhitespace[0];
-              }
-            }
-          }
-
-          // Close the actual inline style being closed
-          // Have to trim whitespace first and then re-add after because markdown can't handle leading/trailing whitespace
-          var trailingWhitespace = TRAILING_WHITESPACE.exec(markdownString);
-          markdownString = markdownString.slice(0, markdownString.length - trailingWhitespace[0].length);
-
-          markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
-          markdownString += trailingWhitespace[0];
-
-          // Handle nested case - reopen any inline styles after closing the parent
-          if (styleIndex > -1 && styleIndex !== openInlineStyles.length - 1) {
-            for (var i = openInlineStyles.length - 1; i !== styleIndex; i--) {
-              var styleItem = (customStyleItems[openInlineStyles[i].style] || StyleItems[openInlineStyles[i].style]);
-              if (styleItem && openInlineStyles[i].offset + openInlineStyles[i].length > characterIndex) {
-                markdownString += styleItem.open();
-              } else {
-                openInlineStyles.splice(i, 1);
-              }
-            }
-          }
-
-          openInlineStyles.splice(styleIndex, 1);
-        }
-      }
-    });
-
-    // Open any inline tags that need opening
-    block.inlineStyleRanges.forEach(function (style, styleIndex) {
-      if (style.offset === characterIndex) {
-        if ((customStyleItems[style.style] || StyleItems[style.style])) {
-          var styleToAdd = (customStyleItems[style.style] || StyleItems[style.style]).open();
-          markdownToAdd.push({
-            type: 'style',
-            style: style,
-            value: styleToAdd
-          });
-        }
-      }
-    });
-
-    // Open any entity tags that need opening
-    block.entityRanges.forEach(function (range, rangeIndex) {
-      if (range.offset === characterIndex) {
-        var entity = rawDraftObject.entityMap[range.key];
-        if (customEntityItems[entity.type] || EntityItems[entity.type]) {
-          var entityToAdd = (customEntityItems[entity.type] || EntityItems[entity.type]).open(entity);
-          markdownToAdd.push({
-            type: 'entity',
-            value: entityToAdd
-          });
-        }
-      }
-    });
+    // Open any tags that need opening, using the correct nesting order.
+    var inlineTagsToOpen = block.inlineStyleRanges.filter(
+      (tag) => tag.offset === characterIndex
+    );
+    var entityTagsToOpen = block.entityRanges.filter(
+      (tag) => tag.offset === characterIndex
+    );
+    inlineTagsToOpen
+      .concat(entityTagsToOpen)
+      .sort(compareTagsLastCloseFirst)
+      .forEach(openTag);
 
     // These are all the opening entity and style types being added to the markdown string for this loop
     // we store in an array and add here because if the character is WS character, we want to hang onto it and not apply it until the next non-whitespace
@@ -345,18 +371,11 @@ function renderBlock(block, index, rawDraftObject, options) {
         return item.value;
       }).join('');
 
-      markdownToAdd.forEach(function (item) {
-        if (item.type === 'style') {
-          // We hang on to this because we may need to close it early and then re-open if there are nested styles being opened and closed.
-          openInlineStyles.push(item.style);
-        }
-      });
-
       markdownToAdd = [];
     }
 
     if (block.type !== 'code-block' && escapeMarkdownCharacters) {
-      let insideInlineCodeStyle = openInlineStyles.find((style) => style.style === 'CODE');
+      let insideInlineCodeStyle = openTags.find((style) => style.style === 'CODE');
 
       if (insideInlineCodeStyle) {
         // Todo - The syntax to escape backtics when inside backtic code already is to use MORE backtics wrapping.
@@ -434,23 +453,8 @@ function renderBlock(block, index, rawDraftObject, options) {
     }
   });
 
-  // Close any remaining entity tags
-  block.entityRanges.forEach(function (range, rangeIndex) {
-    if (range.offset + range.length === Array.from(block.text).length) {
-      var entity = rawDraftObject.entityMap[range.key];
-      if (customEntityItems[entity.type] || EntityItems[entity.type]) {
-        markdownString += (customEntityItems[entity.type] || EntityItems[entity.type]).close(entity);
-      }
-    }
-  });
-
-  // Close any remaining inline tags (if an inline tag ends at the very last char, we won't catch it inside the loop)
-  openInlineStyles.reverse().forEach(function (style) {
-    var trailingWhitespace = TRAILING_WHITESPACE.exec(markdownString);
-    markdownString = markdownString.slice(0, markdownString.length - trailingWhitespace[0].length);
-    markdownString += (customStyleItems[style.style] || StyleItems[style.style]).close();
-    markdownString += trailingWhitespace[0];
-  });
+  // Finally, close all remaining open tags
+  reverse(openTags).forEach(closeTag);
 
   // Close block level item
   if (customStyleItems[type] || StyleItems[type]) {
