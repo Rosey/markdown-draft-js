@@ -351,6 +351,19 @@ function renderBlock(block, index, rawDraftObject, options) {
       }
     });
 
+    // We also need to close open tags when hitting a newline. This is not necessary for all tags, but some, such as italic.
+    // It's easier to generally split all open tags, though. So we do that.
+    if (character === '\n') {
+      // We need to copy because closing tags will mutate the openTags array
+      const tagsToSplit = openTags.concat()
+      // Close in reverse order as they were opened
+      reverse(tagsToSplit).forEach(closeTag);
+      // Reopen these tags, but only those that do actually span farther than the newline
+      tagsToSplit
+        .filter(tag => tag.offset + tag.length > characterIndex + 1)
+        .sort(compareTagsLastCloseFirst).forEach(openTag);
+    }
+
     // Open any tags that need opening, using the correct nesting order.
     var inlineTagsToOpen = block.inlineStyleRanges.filter(
       (tag) => tag.offset === characterIndex
@@ -366,7 +379,7 @@ function renderBlock(block, index, rawDraftObject, options) {
     // These are all the opening entity and style types being added to the markdown string for this loop
     // we store in an array and add here because if the character is WS character, we want to hang onto it and not apply it until the next non-whitespace
     // character before adding the markdown, since markdown doesn’t play nice with leading whitespace (eg '** bold**' is no  good, whereas ' **bold**' is good.)
-    if (character !== ' ' && markdownToAdd.length) {
+    if (character !== ' ' && character !== '\n' && markdownToAdd.length) {
       markdownString += markdownToAdd.map(function (item) {
         return item.value;
       }).join('');
