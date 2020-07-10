@@ -494,7 +494,7 @@ describe('draftToMarkdown', function () {
             type: 'LINK',
             mutability: 'MUTABLE',
             data: {
-              url: 'http://localhost:8000',
+              url: 'http://localhost:8000'
             }
           }
         }
