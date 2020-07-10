@@ -264,7 +264,7 @@ describe('draftToMarkdown', function () {
       var rawObject = {"entityMap":{},"blocks":[{"key":"2unrq","text":"asdasdasd","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":9,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"62od7","text":"asdasd","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":6,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"c5obb","text":"asdasdasdmmmasdads","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":9,"style":"BOLD"},{"offset":0,"length":12,"style":"ITALIC"}],"entityRanges":[],"data":{}}]};
       /* eslint-enable */
       var markdown = draftToMarkdown(rawObject);
-      expect(markdown).toEqual('**asdasdasd**\n\n**asdasd**\n\n**_asdasdasd_**_mmm_asdads');
+      expect(markdown).toEqual('**asdasdasd**\n\n**asdasd**\n\n_**asdasdasd**mmm_asdads');
 
       /* eslint-disable */
       rawObject = {"entityMap":{"0":{"type":"mention","mutability":"SEGMENTED","data":{"mention":{"name":"Bran Stark","avatar":"https://d1ojh8nvjh9gcx.cloudfront.net/accounts/168181/2e4bff18a328c50404c411c04e608a32a967b1a2/large_2x.png","link":null,"id":168181}}}},"blocks":[{"key":"bkvjj","text":"asdadd adasdasd Bran Stark sadadsadasddasdasdasdsadsadasdsadasdasdasdsa","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":7,"length":9,"style":"BOLD"},{"offset":27,"length":27,"style":"BOLD"},{"offset":38,"length":7,"style":"ITALIC"},{"offset":63,"length":8,"style":"ITALIC"}],"entityRanges":[{"offset":16,"length":10,"key":0}],"data":{}}]};
@@ -452,6 +452,55 @@ describe('draftToMarkdown', function () {
       /* eslint-enable */
       var markdown = draftToMarkdown(rawObject);
       expect(markdown).toEqual('Testing 👍 _italic_ words words words **bold** words words words');
+    });
+
+    it('handles overlapping inline style ranges correctly', function () {
+      var rawObject = {
+        blocks: [
+          {
+            key: '8ohj1',
+            text: 'foo bar baz',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [
+              { offset: 0, length: 7, style: 'ITALIC' },
+              { offset: 4, length: 7, style: 'BOLD' }
+            ],
+            entityRanges: [],
+            data: {}
+          }
+        ],
+        entityMap: {}
+      };
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('_foo **bar**_ **baz**');
+    });
+
+    it('handles overlapping entities & inline style ranges correctly', function () {
+      var rawObject = {
+        blocks: [
+          {
+            key: '5rq8m',
+            text: 'foo bar baz',
+            type: 'unstyled',
+            depth: 0,
+            inlineStyleRanges: [{ offset: 4, length: 7, style: 'BOLD' }],
+            entityRanges: [{ offset: 0, length: 7, key: 0 }],
+            data: {}
+          }
+        ],
+        entityMap: {
+          '0': {
+            type: 'LINK',
+            mutability: 'MUTABLE',
+            data: {
+              url: 'http://localhost:8000',
+            }
+          }
+        }
+      };
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('[foo **bar**](http://localhost:8000) **baz**');
     });
   });
 
