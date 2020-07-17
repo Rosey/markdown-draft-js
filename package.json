@@ -45,5 +45,8 @@
   },
   "dependencies": {
     "remarkable": "^2.0.1"
+  },
+  "engines": {
+    "node": ">=10.13.0"
   }
 }
