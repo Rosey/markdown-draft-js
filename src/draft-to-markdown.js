@@ -252,6 +252,8 @@ function renderBlock(block, index, rawDraftObject, options) {
       orderedListNumber = {};
       markdownString += (customStyleItems[type] || StyleItems[type]).open(block);
     }
+  } else {
+    orderedListNumber = {};
   }
 
   // A stack to keep track of open tags
