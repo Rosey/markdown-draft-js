@@ -397,6 +397,19 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('1. Test Item one unnested\n    1. Test Item one nested\n    2. Test Item two nested\n    3. Test item three nested\n2. Test item two unnested\n3. Test item three unnested\n4. Test Item Four unnested\n    1. Test item one nested under test item four\n        1. Test item one double nested\n        2. Test item two double nested');
     });
 
+    it('resets ordered lists count when list is interupted by another element', function () {
+      /* eslint-disable */
+      var rawObject = {"entityMap":{},"blocks":[
+        {"key":"8omhg","text":"first top level list item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},
+        {"key":"d8k17","text":"second top level list item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},
+        {"key":"ag9fd","text":"another block-level item","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},
+        {"key":"b5fol","text":"another top level list item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},
+      ]};
+      /* eslint-enable */
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('1. first top level list item\n2. second top level list item\n\nanother block-level item\n\n1. another top level list item');
+    })
+
     it('renders unnested ordered lists', function () {
       /* eslint-disable */
       var rawObject = {"entityMap":{},"blocks":[{"key":"d9c1d","text":"item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"meoh","text":"item","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
