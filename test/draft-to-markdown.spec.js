@@ -96,6 +96,30 @@ describe('draftToMarkdown', function () {
       markdown = draftToMarkdown(rawObject, {preserveNewlines: true});
       expect(markdown).toEqual('> one\n> \n> blockquote\nHello :)');
     });
+
+    it('creates distinct paragraphs when preserveNewlines is default (false)', function () {
+      /* eslint-disable */
+      const rawObject = {"blocks":[
+        {"key":"6iuat","text":"paragraph one","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},
+        {"key":"603i9","text":"paragraph two","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},
+      ],"entityMap":{}}
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('paragraph one\n\nparagraph two');
+    });
+
+    it('creates distinct paragraphs when preserveNewlines is set to true', function () {
+      /* eslint-disable */
+      const rawObject = {"blocks":[
+        {"key":"6iuat","text":"paragraph one","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},
+        {"key":"603i9","text":"paragraph two","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},
+      ],"entityMap":{}}
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject, {preserveNewlines: true});
+      expect(markdown).toEqual('paragraph one\n\nparagraph two');
+    });
   });
 
   describe('entity conversion', function () {
