@@ -194,7 +194,7 @@ The `table` rule is disabled by default but could be enabled like in the example
 
 ### More options
 
-`preserveNewlines` can be passed in to preserve empty whitespace newlines. By default, markdown rules specify that blank whitespace is collapsed, but in the interest in maintaining 1:1 parity with draft appearance-wise, this option can be turned on if you like :)
+`preserveNewlines` can be passed in to preserve multiple sequential empty lines. By default, markdown rules specify that blank whitespace is collapsed, the result being that more than one empty line will be reduced to a single empty line, but in the interest in maintaining 1:1 parity with draft appearance-wise, this option can be turned on if you like :)
 
 NOTE: If you plan on passing the markdown to a 3rd party markdown parser, markdown default behaviour IS to strip additional newlines, so the HTML it generates will likely strip those newlines at that point.... Which is why this is an option disabled by default.
 
