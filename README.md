@@ -128,8 +128,9 @@ Since entities can also contain additional custom information - in this case, th
 
 What if you wanted to go the opposite direction? markdownToDraft uses [Remarkable](https://github.com/jonschlinkert/remarkable) for defining custom markdown types.
 
-In this case, you need to write a [remarkable plugin](https://github.com/jonschlinkert/remarkable/blob/master/docs/plugins.md) first and pass it in to `markdownToDraft` -
+In this case, you need to write a [remarkable plugin](https://github.com/jonschlinkert/remarkable/blob/master/docs/plugins.md) first and pass it in to `markdownToDraft`. You can find an example of Remarkable plugin in [this repository tests](https://github.com/Rosey/markdown-draft-js/blob/main/test/markdown-to-draft.spec.js#L369).
 
+Example to convert a custom Remarkable token `mention_open` to a Draft entity:
 ```javascript
 var rawDraftJSObject = markdownToDraft(markdownString, {
   remarkablePlugins: [remarkableMentionPlugin],
@@ -146,10 +147,39 @@ var rawDraftJSObject = markdownToDraft(markdownString, {
         }
       };
     }
-  }
+  },
+});
+```
+Example to convert a custom Remarkable token `atomic` to a Draft block:
+```javascript
+var rawDraftJSObject = markdownToDraft(markdownString, {
+  remarkablePlugins: [remarkableMentionPlugin],
+  blockTypes: {
+    atomic_block: function (item) {
+      return {
+        type: "atomic",
+        text: item.content,
+        entityRanges: [],
+        inlineStyleRanges: [],
+      }
+    }
+  },
 });
 ```
 
+If your custom Remarkable plugin returns a standalone token, you can specify it
+in the configuration:
+```javascript
+var rawDraftJSObject = markdownToDraft(markdownString, {
+  remarkablePlugins: [remarkableMentionPlugin],
+  blockTypes: {
+    atomic_block: function (item) {
+      ...
+    }
+  },
+  remarkableStandaloneBlocks: ['atomic_block']
+});
+```
 
 ## Additional options
 

@@ -101,6 +101,12 @@ const DefaultBlockStyles = {
   code: 'CODE'
 };
 
+// Remarkable blocks that stands alone.
+const DefaultRemarkableStandaloneBlocks = [
+  'hr',
+  'fence'
+]
+
 // Key generator for entityMap items
 var idCounter = -1;
 function generateUniqueKey() {
@@ -229,6 +235,7 @@ function markdownToDraft(string, options = {}) {
   const BlockTypes = Object.assign({}, DefaultBlockTypes, options.blockTypes || {});
   const BlockEntities = Object.assign({}, DefaultBlockEntities, options.blockEntities || {});
   const BlockStyles = Object.assign({}, DefaultBlockStyles, options.blockStyles || {});
+  const RemarkableStandaloneBlocks = DefaultRemarkableStandaloneBlocks.concat(options.remarkableStandaloneBlocks)
 
   parsedData.forEach(function (item) {
     // Because of how remarkable's data is formatted, we need to cache what kind of list we're currently dealing with
@@ -254,7 +261,7 @@ function markdownToDraft(string, options = {}) {
 
       // The entity map is a master object separate from the block so just add any entities created for this block to the master object
       Object.assign(entityMap, blockEntities);
-    } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence' || itemType === 'hr') && BlockTypes[itemType]) {
+    } else if ((itemType.indexOf('_open') !== -1 || RemarkableStandaloneBlocks.includes(itemType)) && BlockTypes[itemType]) {
       var depth = 0;
       var block;
 
