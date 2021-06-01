@@ -242,7 +242,6 @@ function markdownToDraft(string, options = {}) {
     if (itemType === 'list_item_open') {
       itemType = currentListType;
     }
-
     if (itemType === 'inline') {
       // Parse inline content and apply it to the most recently created block level item,
       // which is where the inline content will belong.
@@ -254,7 +253,7 @@ function markdownToDraft(string, options = {}) {
 
       // The entity map is a master object separate from the block so just add any entities created for this block to the master object
       Object.assign(entityMap, blockEntities);
-    } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence' || itemType === 'hr') && BlockTypes[itemType]) {
+    } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence' || itemType === 'hr' || itemType === 'htmlblock') && BlockTypes[itemType]) {
       var depth = 0;
       var block;
 
@@ -266,7 +265,7 @@ function markdownToDraft(string, options = {}) {
       // List items will always be at least `level==1` though so we need a separate check for that
       // If there’s nested block level items deeper than that, we need to make sure we capture this by cloning the topmost block
       // otherwise we’ll accidentally overwrite its text. (eg if there's a blockquote with 3 nested paragraphs with inline text, without this check, only the last paragraph would be reflected)
-      if (item.level === 0 || item.type === 'list_item_open') {
+      if (item.level === 0 || item.type === 'list_item_open' || item.type === 'fence') {
         block = Object.assign({
           depth: depth
         }, BlockTypes[itemType](item));
