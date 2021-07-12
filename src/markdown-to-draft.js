@@ -98,7 +98,8 @@ const DefaultBlockEntities = {
 const DefaultBlockStyles = {
   strong_open: 'BOLD',
   em_open: 'ITALIC',
-  code: 'CODE'
+  code: 'CODE',
+  del_open: 'STRIKETHROUGH'
 };
 
 // Key generator for entityMap items
