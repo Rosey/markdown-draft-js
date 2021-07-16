@@ -660,4 +660,13 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[2].text).toEqual('This is another line under the table.');
   });
 
+  it ('can handle strikethrough', function () {
+    var markdown = 'this is ~~strikethrough~~ text';
+    var conversionResult = markdownToDraft(markdown);
+
+    expect(conversionResult.blocks[0].inlineStyleRanges.length).toBe(1);
+    expect(conversionResult.blocks[0].inlineStyleRanges[0].length).toBe(13);
+    expect(conversionResult.blocks[0].inlineStyleRanges[0].style).toBe('STRIKETHROUGH');
+  });
+
 });

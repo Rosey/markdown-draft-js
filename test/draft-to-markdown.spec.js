@@ -208,6 +208,15 @@ describe('draftToMarkdown', function () {
 
         expect(markdown).toEqual('Hello There, _I am italic_ yay');
       });
+
+      it ('renders strikethrough text correctly', function () {
+        /* eslint-disable */
+        var rawObject = {"entityMap":{},"blocks":[{"depth":0,"type":"unstyled","text":"this is strikethrough text","entityRanges":[],"inlineStyleRanges":[{"offset":8,"length":14,"style":"STRIKETHROUGH"}]}]};
+        /* eslint-enable */
+        var markdown = draftToMarkdown(rawObject);
+
+        expect(markdown).toEqual('this is ~~strikethrough~~ text');
+      });
     });
 
     it('renders links with a URL correctly', function () {
