@@ -43,6 +43,14 @@ describe('idempotency', function () {
     expect(markdownFromDraft).toEqual(markdownString);
   });
 
+  it ('renders preserved new lines after list correctly', function () {
+    var markdown = '- unordered item\n\n\n1. ordered item\n\n\nparagraph'
+    var rawDraftConversion = markdownToDraft(markdown, {preserveNewlines: true });
+    var markdownConversion = draftToMarkdown(rawDraftConversion, {preserveNewlines: true});
+
+    expect(markdownConversion).toEqual(markdown);
+  });
+
   it('renders blockquotes correctly', function () {
     var markdownString = '> Hello I am Blockquote\n\nI am not\n\n> I am';
     var draftJSObject = markdownToDraft(markdownString, {preserveNewlines: true});
