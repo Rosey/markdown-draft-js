@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0] - 2021-07-16
+
+- Fix for overlapping inline styles (https://github.com/Rosey/markdown-draft-js/pull/130)
+- Bump lodash version to 4.17.19 (https://github.com/Rosey/markdown-draft-js/pull/132)
+- Fix ordered list numbering (https://github.com/Rosey/markdown-draft-js/pull/135)
+- Add strikethrough support (https://github.com/Rosey/markdown-draft-js/issues/156)
+- Fix issue with newlines after lists when `preserveNewLines` is `true` (https://github.com/Rosey/markdown-draft-js/pull/146)
+
 ## [2.2.1] - 2020-06-16
 
 - Update remarkable dependency (https://github.com/Rosey/markdown-draft-js/pull/126)
