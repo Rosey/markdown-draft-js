@@ -457,6 +457,111 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].data.lang).toEqual('js');
   });
 
+  it('can handle custom standalone block data', function () {
+    var delimiter = '---';
+    var blockRule = function (state, startLine, endLine, silent) {
+      var marker,
+          len,
+          nextLine,
+          mem,
+          content,
+          haveEndMarker = false,
+          pos = state.bMarks[startLine] + state.tShift[startLine],
+          max = state.eMarks[startLine]
+
+      // Check if the current line is the first line
+      if (startLine !== 0) { return false }
+
+      // Check if the line contains at least 3 characters
+      if (pos + 3 > max) { return false }
+
+      // Check if the first character is a '-'
+      marker = state.src.charCodeAt(pos)
+
+      if (marker !== 0x2D) { return false }
+
+      // Check marker length
+      mem = pos
+      pos = state.skipChars(pos, marker)
+      len = pos - mem
+
+      if (len < 3) { return false }
+
+      // Since start is found, we can report success here in validation mode
+      if (silent) { return true }
+
+      nextLine = startLine
+
+      for (;;) {
+        nextLine++
+
+        // Break if the current line is the last line
+        if (nextLine >= endLine) {
+          break
+        }
+
+        pos = mem = state.bMarks[nextLine] + state.tShift[nextLine]
+        max = state.eMarks[nextLine]
+
+        // Skip to next line if the current line does not start with the
+        // marker
+        if (state.src.charCodeAt(pos) !== marker) { continue }
+
+        // Skip to next line if the closing dash is indented with more than
+        // 4 spaces
+        if (state.tShift[nextLine] - state.blkIndent >= 4) { continue }
+
+        pos = state.skipChars(pos, marker)
+
+        // Skip to next line if the number of closing dashed is not the same
+        // as the opening ones.
+        if (pos - mem < len) { continue }
+
+        // Skip to next line if there are more characters after possible
+        // closing dashes
+        pos = state.skipSpaces(pos)
+
+        if (pos < max) { continue }
+
+        // Mark block end
+        haveEndMarker = true
+
+        break
+      }
+
+      state.line = nextLine + (haveEndMarker ? 1 : 0)
+      content = state.getLines(startLine + 1, nextLine, state.blkIndent, false).trim()
+
+      state.tokens.push({
+        type: 'yaml_frontmatter',
+        content: content,
+        level: state.level,
+        lines: [ startLine, state.line ]
+      })
+
+      return true
+    }
+    var frontmatterYamlWrapper = function (remarkable) {
+      remarkable.block.ruler.before('hr', 'yaml_frontmatter', blockRule)
+    }
+    var markdown = '---\nsomeMetadata: content\n---';
+    var conversionResult = markdownToDraft(markdown, {
+      remarkablePlugins: [frontmatterYamlWrapper],
+      blockTypes: {
+        yaml_frontmatter: function (item) {
+          return {
+            type: 'atomic',
+            content: item.content
+          }
+        }
+      },
+      remarkableStandaloneBlocks: ['yaml_frontmatter']
+    });
+
+    expect(conversionResult.blocks[0].type).toEqual('atomic');
+    expect(conversionResult.blocks[0].content).toEqual('someMetadata: content');
+  });
+
   it('can handle simple nested styles', function () {
     var markdown = '__*hello* world__';
     var conversionResult = markdownToDraft(markdown);
