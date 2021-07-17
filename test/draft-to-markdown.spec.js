@@ -96,6 +96,12 @@ describe('draftToMarkdown', function () {
       markdown = draftToMarkdown(rawObject, {preserveNewlines: true});
       expect(markdown).toEqual('> one\n> \n> blockquote\nHello :)');
     });
+
+    it('handles inline styles spanning newlines', function () {
+      const rawObject = {'blocks':[{'key':'7va97','text':'foo\nbar','type':'unstyled','depth':0,'inlineStyleRanges':[{'offset':2,'length':3,'style':'ITALIC'}],'entityRanges':[],'data':{}}],'entityMap':{}}
+      var markdown = draftToMarkdown(rawObject);
+      expect(markdown).toEqual('fo_o_\n_b_ar');
+    })
   });
 
   describe('entity conversion', function () {
