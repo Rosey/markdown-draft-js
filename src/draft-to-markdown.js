@@ -282,7 +282,7 @@ function renderBlock(block, index, rawDraftObject, options) {
       if (customEntityItems[entity.type] || EntityItems[entity.type]) {
         var entityToAdd = (
           customEntityItems[entity.type] || EntityItems[entity.type]
-        ).open(entity);
+        ).open(entity, block);
         markdownToAdd.push({
           type: 'entity',
           value: entityToAdd
@@ -322,7 +322,7 @@ function renderBlock(block, index, rawDraftObject, options) {
       if (customEntityItems[entity.type] || EntityItems[entity.type]) {
         markdownString += (
           customEntityItems[entity.type] || EntityItems[entity.type]
-        ).close(entity);
+        ).close(entity, block);
       }
     }
   }
