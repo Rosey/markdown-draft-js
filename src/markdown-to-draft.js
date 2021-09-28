@@ -142,7 +142,9 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
       };
 
       // Edge case hack because code items don't have inline content or open/close, unlike everything else
-      if (child.type === 'code') {
+      const childTypesAllowed = ['code', 'sup', 'sub'];
+      
+      if (childTypesAllowed.includes(child.type)) {
         styleBlock.length = strlen(child.content);
         content += child.content;
       }
