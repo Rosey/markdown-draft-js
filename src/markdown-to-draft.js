@@ -142,7 +142,8 @@ function parseInline(inlineItem, BlockEntities, BlockStyles) {
       };
 
       // Edge case hack because code items don't have inline content or open/close, unlike everything else
-      if (child.type === 'code') {
+      // sub and sup are also special :)
+      if (child.type === 'code' || child.type === 'sub' || child.type === 'sup') {
         styleBlock.length = strlen(child.content);
         content += child.content;
       }
@@ -255,7 +256,7 @@ function markdownToDraft(string, options = {}) {
 
       // The entity map is a master object separate from the block so just add any entities created for this block to the master object
       Object.assign(entityMap, blockEntities);
-    } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence' || itemType === 'hr') && BlockTypes[itemType]) {
+    } else if ((itemType.indexOf('_open') !== -1 || itemType === 'fence' || itemType === 'hr' || itemType === 'htmlblock') && BlockTypes[itemType]) {
       var depth = 0;
       var block;
 
