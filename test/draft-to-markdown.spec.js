@@ -316,6 +316,28 @@ describe('draftToMarkdown', function () {
       expect(markdown).toEqual('**jkhkhj [Bran Stark](@168181)**  khkjj');
     });
 
+    it('renders complex nested items correctly using entityItems block parameters', function () {
+      /* eslint-disable */
+      var rawObject = { "blocks": [ { "key": "2h685", "text": "A mention in code block @Christophe Hamerling", "type": "code-block", "depth": 0, "inlineStyleRanges": [], "entityRanges": [{ "offset": 24, "length": 21, "key": 0 }], "data": { "language": "" } }, { "key": "34o22", "text": "A mention in unstyled block @Loris Hamerling", "type": "unstyled", "depth": 0, "inlineStyleRanges": [], "entityRanges": [{ "offset": 28, "length": 16, "key": 1 }], "data": {} } ], "entityMap": { "0": { "type": "mention", "mutability": "IMMUTABLE", "data": { "mention": { "id": "8cb18514-a9be-11eb-abce-0242ac120005" } } }, "1": { "type": "mention", "mutability": "IMMUTABLE", "data": { "mention": { "id": "8cb18514-a9be-11eb-abce-0242ac120006" } } } } };
+      /* eslint-enable */
+
+      var markdown = draftToMarkdown(rawObject, {
+        entityItems: {
+          mention: {
+            open: function (entity, block) {
+              console.log(block);
+              return block.type === 'code-block' ? `[code@${entity.data.mention.id}:` : '[';
+            },
+
+            close: function (entity, block) {
+              return block.type === 'code-block' ? ']' : '](@'+ entity.data.mention.id +')'
+            }
+          }
+        }
+      });
+      expect(markdown).toEqual('```\nA mention in code block [code@8cb18514-a9be-11eb-abce-0242ac120005:@Christophe Hamerling]\n```\n\nA mention in unstyled block [@Loris Hamerling](@8cb18514-a9be-11eb-abce-0242ac120006)');
+    });
+
     it('renders custom items correctly', function () {
       /* eslint-disable */
       var rawObject = {"entityMap":{},"blocks":[{"key":"f2bpj","text":"OneTwoThree","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":3,"style":"red"},{"offset":3,"length":3,"style":"orange"},{"offset":6,"length":5,"style":"yellow"}],"entityRanges":[],"data":{}}]};

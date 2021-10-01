@@ -112,8 +112,8 @@ Here’s another example, with a mention entity type -
 var markdownString = draftToMarkdown(rawObject, {
   entityItems: {
     mention: {
-      open: function (entity) {
-        return '<span class="mention-item" data-user-id="' + entity.data.id + '">';
+      open: function (entity, block) {
+        return '<span class="mention-item" data-user-id="' + entity.data.id + '" data-block-type="'+ block.type + '">';
       },
 
       close: function (entity) {
@@ -125,6 +125,8 @@ var markdownString = draftToMarkdown(rawObject, {
 ```
 
 Since entities can also contain additional custom information - in this case, the user’s id, an `entity` object is passed to the open and close methods so that you can use that information in your open/close text if you need to.
+
+In case you need more information about the block the entity belongs to, it is available as the second parameter of the open/close methods.
 
 What if you wanted to go the opposite direction? markdownToDraft uses [Remarkable](https://github.com/jonschlinkert/remarkable) for defining custom markdown types.
 
