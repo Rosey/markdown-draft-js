@@ -1,5 +1,11 @@
 # Changelog
 
+
+## [2.4.0] - 2021-10-01
+
+- Include block as a param in entity open/close (https://github.com/Rosey/markdown-draft-js/pull/160)
+- Support for sub, sup, htmlblock (https://github.com/Rosey/markdown-draft-js/pull/163)
+
 ## [2.3.0] - 2021-07-16
 
 - Fix for overlapping inline styles (https://github.com/Rosey/markdown-draft-js/pull/130)
