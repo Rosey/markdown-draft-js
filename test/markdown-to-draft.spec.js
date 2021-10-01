@@ -457,6 +457,61 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].data.lang).toEqual('js');
   });
 
+  it('can handle a fence inside the list item', function () {
+    var markdown = `
+4. List item **four**
+    1. \`\`\`js
+        {
+            "lead": {
+                "first_name": "{{firstName}}",
+                "last_name": "{{lastName}}",
+                "mobile_number": "{{phoneNumber}}",
+                "email": "{{email}}"
+            }
+        }
+        \`\`\`
+    `;
+    var conversionResult = markdownToDraft(markdown, {
+      blockTypes: {
+        fence: function (item) {
+          return {
+            type: 'code-block',
+            data: {
+              lang: item.params
+            }
+          };
+        }
+      }
+    });
+    expect(conversionResult.blocks[2].type).toEqual('code-block');
+    expect(conversionResult.blocks[2].data.lang).toEqual('js');
+  });
+
+  it('can handle a html', function () {
+    var markdown = `
+<iframe width="1190" height="669" src="https://www.youtube.com/embed/utSylHRz_E0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    `;
+    var conversionResult = markdownToDraft(markdown, {
+      remarkableOptions: {
+        html: true
+      },
+      blockTypes: {
+        htmlblock: function (item) {
+          return {
+            type: 'html-block',
+            data: {
+              content: item.content
+            }
+          };
+        }
+      }
+    });
+    expect(conversionResult.blocks[0].data.content)
+      .toEqual(`<iframe width="1190" height="669" src="https://www.youtube.com/embed/utSylHRz_E0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+`);
+    expect(conversionResult.blocks[0].type).toEqual('html-block');
+  });
+
   it('can handle simple nested styles', function () {
     var markdown = '__*hello* world__';
     var conversionResult = markdownToDraft(markdown);

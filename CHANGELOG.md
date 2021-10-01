@@ -1,5 +1,10 @@
 # Changelog
 
+## unreleased
+
+- Correctly handle fence blocks inside of the other blocks
+- Correctly handle embedded html
+
 ## [2.2.1] - 2020-06-16
 
 - Update remarkable dependency (https://github.com/Rosey/markdown-draft-js/pull/126)
