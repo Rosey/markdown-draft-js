@@ -669,4 +669,53 @@ describe('markdownToDraft', function () {
     expect(conversionResult.blocks[0].inlineStyleRanges[0].style).toBe('STRIKETHROUGH');
   });
 
+  describe ('sub and sup', function () {
+    it ('renders sup and sub correctly when configured', function () {
+      var markdown = 'H~2~O^TM^';
+      var conversionResult = markdownToDraft(markdown, {
+        remarkablePreset: 'full',
+        blockStyles: {
+          sub: 'SUB',
+          sup: 'SUP'
+        }
+      });
+
+      expect(conversionResult.blocks[0].text).toEqual('H2OTM');
+      expect(conversionResult.blocks[0].type).toEqual('unstyled');
+      expect(conversionResult.blocks[0].inlineStyleRanges[0]).toEqual({
+        offset: 1,
+        length: 1,
+        style: 'SUB'
+      });
+      expect(conversionResult.blocks[0].inlineStyleRanges[1]).toEqual({
+        offset: 3,
+        length: 2,
+        style: 'SUP'
+      });
+    });
+  });
+
+  describe ('htmlblock', function () {
+    it ('renders htmlblock correctly when configured', function () {
+      var markdown = '<div>some html</div>';
+      var conversionResult = markdownToDraft(markdown, {
+        remarkableOptions: {
+          html: true
+        },
+        blockTypes: {
+          htmlblock: function (item) {
+            return {
+              text: 'HTML transformed into text',
+              type: 'unstyled'
+            };
+          }
+        }
+      });
+
+      expect(conversionResult.blocks[0].text).toEqual('HTML transformed into text');
+      expect(conversionResult.blocks[0].type).toEqual('unstyled');
+      expect(conversionResult.blocks[0].depth).toEqual(0);
+    });
+  });
+
 });
