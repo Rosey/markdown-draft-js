@@ -166,6 +166,24 @@ const StyleItems = {
     close: function () {
       return '`';
     }
+  },
+  'SUPERSCRIPT': {
+    open: function () {
+      return '`^';
+    },
+
+    close: function () {
+      return '^';
+    }
+  },
+  'SUBSCRIPT': {
+    open: function () {
+      return '~';
+    },
+
+    close: function () {
+      return '~';
+    }
   }
 };
 
