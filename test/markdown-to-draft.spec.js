@@ -718,4 +718,15 @@ describe('markdownToDraft', function () {
     });
   });
 
+  describe('determinism', function () {
+    it('has the same entity keys when run in sequence', function () {
+      var markdown = 'I have [an entity](https://example.com)';
+      var conversionResult1 = markdownToDraft(markdown, {});
+      var conversionResult2 = markdownToDraft(markdown, {});
+
+      expect(Object.keys(conversionResult1.entityMap))
+        .toEqual(Object.keys(conversionResult2.entityMap));
+    });
+  });
+
 });

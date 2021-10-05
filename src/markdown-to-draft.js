@@ -102,13 +102,6 @@ const DefaultBlockStyles = {
   del_open: 'STRIKETHROUGH'
 };
 
-// Key generator for entityMap items
-var idCounter = -1;
-function generateUniqueKey() {
-  idCounter++;
-  return idCounter;
-}
-
 /*
  * Handle inline content in a block level item
  * parses for BlockEntities (links, images) and BlockStyles (em, strong)
@@ -124,7 +117,7 @@ function generateUniqueKey() {
  *  blockEntityRanges: block-level representation of block entities including key to access the block entity from the global map
  *  blockStyleRanges: block-level representation of styles (eg strong, em)
 */
-function parseInline(inlineItem, BlockEntities, BlockStyles) {
+function parseInline(inlineItem, BlockEntities, BlockStyles, generateUniqueKey) {
   var content = '', blockEntities = {}, blockEntityRanges = [], blockInlineStyleRanges = [];
   inlineItem.children.forEach(function (child) {
     if (child.type === 'text') {
@@ -189,6 +182,13 @@ function markdownToDraft(string, options = {}) {
   const remarkableOptions = typeof options.remarkableOptions === 'object' ? options.remarkableOptions : null;
   const md = new Remarkable(remarkablePreset, remarkableOptions);
 
+  // Key generator for entityMap items
+  var idCounter = -1;
+  function generateUniqueKey() {
+    idCounter++;
+    return idCounter;
+  }
+
   // if tables are not explicitly enabled, disable them by default
   if (
     !remarkableOptions ||
@@ -248,7 +248,7 @@ function markdownToDraft(string, options = {}) {
     if (itemType === 'inline') {
       // Parse inline content and apply it to the most recently created block level item,
       // which is where the inline content will belong.
-      var {content, blockEntities, blockEntityRanges, blockInlineStyleRanges} = parseInline(item, BlockEntities, BlockStyles);
+      var {content, blockEntities, blockEntityRanges, blockInlineStyleRanges} = parseInline(item, BlockEntities, BlockStyles, generateUniqueKey);
       var blockToModify = blocks[blocks.length - 1];
       blockToModify.text = content;
       blockToModify.inlineStyleRanges = blockInlineStyleRanges;
